@@ -24,8 +24,6 @@
 rm -f config.cache
 rm -f acconfig.h
 
-./genconf.sh $* package.conf
-
 aclocal -I ./ac-macros
 autoconf
 #acconfig
