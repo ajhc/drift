@@ -1,0 +1,59 @@
+------------------------------------------------------------------------------
+
+			     DrIFT
+
+This package contains a source distribution of DrIFT, a tool for automatic
+derivation of Haskell class instances. DrIFT was formerly known as Derive.
+
+the current homepage is at
+    http://repetae.net/john/computer/haskell/DrIFT/
+
+
+------------------------------------------------------------------------------
+
+Contents of this package:
+
+  - src         Directory with the source files of the DrIFT tool
+  - example     Directory with examples of using the DrIFT tool
+  - docs        Documentation
+
+------------------------------------------------------------------------------
+
+To configure and install DrIFT, type the following:
+
+  ./configure --prefix=<dir>
+  make install
+
+Where <dir> is the directory in which you want to install the tool. Note that
+a haskell compiler (nhc98 or ghc) must be in your path. Otherwise, supply the
+location of a Haskell compiler as follows:
+
+  ./configure --prefix=<dir> --with-hc=<haskell compiler>
+  make install
+
+
+------------------------------------------------------------------------------
+
+To use DrIFT, heed the following instructions (which were taken from the
+DrIFT v1.0 distribution).
+
+  Installation
+  ------------
+  copy the 'DrIFT' executable to somewhere on your path
+
+  set DERIVEPATH to the list of directories you wish to search for 
+  modules / interfaces. 
+
+  DERIVEPATH is quite fussy about the format the list should take :-
+    * each path should be separated by ':'
+    * no space inserted anywhere
+    * no final '/' on the end of a path
+
+  good - /users/grad/nww/share/hugs/lib:/users/grad/nww/share/hugs/lib/hugs
+  bad  - /users/grad/nww/share/hugs/lib/:/users/grad/nww/share/hugs/lib/hugs/
+
+  Running DrIFT
+  --------------
+  DrIFT <filename>
+
+------------------------------------------------------------------------------

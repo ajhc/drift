@@ -1,0 +1,46 @@
+
+%define version @VERSION@
+%define release 1
+%define prefix /usr
+%define progname DrIFT
+
+Summary: DeRiving Instances From Types
+Name: DrIFT
+Version: %{version}
+Release: %{release}
+Copyright: MIT
+Group: Applications/Development
+BuildRoot: /var/tmp/%{progname}-%{version}-%{release}-buildroot
+Source: http://repetae.net/john/computer/haskell/%{progname}/drop/%{progname}-%{version}.tar.gz
+URL: http://repetae.net/john/computer/haskell/%{progname}/
+Packager: John Meacham <john@repetae.net>
+Prefix: %{prefix}
+
+%description
+This package contains a source distribution of DrIFT, a tool for automatic derivation of Haskell class instances. DrIFT was formerly known as Derive.
+
+%prep
+%setup
+
+%build
+./configure --prefix %{prefix}
+make
+make docs
+
+%clean
+#rm -rf $RPM_BUILD_ROOT
+
+%install
+make prefix=$RPM_BUILD_ROOT%{prefix} install
+
+
+%files
+%attr(-, root, root) %doc Changelog
+%attr(-, root, root) %doc LICENSE
+%attr(-, root, root) %doc docs/drift.ps
+%attr(-, root, root) %doc docs/drift.html
+#%attr(-, root, root) %doc LICENSE
+%attr(-, root, root) %{prefix}/bin/DrIFT
+%attr(-, root, root) %{prefix}/bin/drift-ghc
+#%attr(-, root, root) %{prefix}/man/man1/ginsu.1.gz
+

@@ -1,0 +1,8 @@
+
+
+* Smarter literate handling, ability to handle TeX style lhs and 
+  generate code appropriately
+
+* switch to parser which can generate meaningful error messages
+  (Parsec?) needs to be pure Haskell 98
+

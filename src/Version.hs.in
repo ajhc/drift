@@ -1,0 +1,8 @@
+module Version(package, version, fullName) where
+
+package = "@PACKAGE@"
+
+version = "@VERSION@"
+
+
+fullName = package ++ "-" ++ version
