@@ -8,11 +8,11 @@ DrIFT_SOURCES = ChaseImports.hs CommandP.hs DataP.lhs DrIFT.hs GetOpt.hs \
    UserRules.hs UserRuleXml.hs Version.hs GenUtil.hs UserRuleGhcBinary.hs \
    RuleUtility.hs RuleFunctorM.hs RuleMonoid.hs
 
-DrIFT_static_SOURCES = $(DrIFT_SOURCES)
-DrIFT_static_LINK = $(DrIFT_LINK) -static -optl-static -ldl
+# DrIFT_static_SOURCES = $(DrIFT_SOURCES)
+# DrIFT_static_LINK = $(DrIFT_LINK) -static -optl-static -ldl
 
 EXTRA_DIST = depend.make
-EXTRA_PROGRAMS = DrIFT_static
+# EXTRA_PROGRAMS = DrIFT_static
 
 
 DrIFT_LINK = $(HC) $(HCFLAGS) -o $@
@@ -42,13 +42,14 @@ depend:
 
 BINDISTNAME=$(PACKAGE)-$(VERSION)-`uname -s`-`uname -m`
 
-bin-dist: $(PACKAGE) $(PACKAGE)_static 
+# $(PACKAGE)_static 
+bin-dist: $(PACKAGE) 
 	$(RM) -rf -- $(BINDISTNAME)
 	mkdir $(BINDISTNAME)
 	strip -- $(PACKAGE) || true
-	strip -- $(PACKAGE)_static || true
+#strip -- $(PACKAGE)_static || true
 	cp -- $(PACKAGE) $(BINDISTNAME)
-	cp -- $(PACKAGE)_static $(BINDISTNAME)
+#cp -- $(PACKAGE)_static $(BINDISTNAME)
 	tar cvf $(BINDISTNAME).tar $(BINDISTNAME)
 	gzip -f -- $(BINDISTNAME).tar
 	$(RM) -rf -- $(BINDISTNAME)

@@ -23,7 +23,7 @@ bin-dist:
 drift-list.txt: src/DrIFT
 	src/DrIFT -l > drift-list.txt
 
-publish: drift-list.txt docs depend bin-dist dist  # rpm 
+publish: drift-list.txt docs bin-dist dist  # rpm 
 	rm -f -- $(PUBLISH_DIR)/drop/$(PACKAGE)-*-*-*.tar.gz
 #	rm -f -- $(PUBLISH_DIR)/drop/$(PACKAGE)-*.rpm
 	rm -f -- "$(PUBLISH_DIR)/drop/$(PACKAGE)-$(VERSION).tar.gz"
