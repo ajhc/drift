@@ -1,5 +1,5 @@
 
---  $Id: GenUtil.hs,v 1.25 2004/03/16 05:09:11 john Exp $
+--  $Id: GenUtil.hs,v 1.30 2004/12/01 23:58:27 john Exp $
 -- arch-tag: 835e46b7-8ffd-40a0-aaf9-326b7e347760
 
 
@@ -25,9 +25,11 @@
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ----------------------------------------
--- | Random useful utility functions written in pure Haskell 98. No
--- instances are exported to insure it can be added to any project
--- without conflicts.
+-- | This is a collection of random useful utility functions written in pure
+-- Haskell 98. In general, it trys to conform to the naming scheme put forth
+-- the haskell prelude and fill in the obvious omissions, as well as provide
+-- useful routines in general. To ensure maximum portability, no instances are
+-- exported so it may be added to any project without conflicts.
 ----------------------------------------
 
 module GenUtil(
@@ -43,6 +45,11 @@ module GenUtil(
     liftT2, liftT3, liftT4, 
     snub, snubFst, sortFst, groupFst, foldl',
     fmapLeft,fmapRight,isDisjoint,isConjoint,
+    groupUnder,
+    sortUnder,
+    sortGroupUnder,
+    sortGroupUnderF,
+
     -- ** Monad routines
     repeatM, repeatM_, replicateM, replicateM_, maybeToMonad,
     toMonadM, ioM, ioMp, foldlM, foldlM_, foldl1M, foldl1M_,
@@ -74,6 +81,11 @@ module GenUtil(
     readHex,
     overlaps,
     showDuration,
+    getArgContents,
+    readM,
+    readsM,
+    split,
+    tokens,
 
     -- * Classes
     UniqueProducer(..)
@@ -85,7 +97,7 @@ import List(intersperse, sortBy, groupBy)
 import Monad
 import qualified IO
 import qualified System
-import Random(StdGen, newStdGen, randomR)
+import Random(StdGen, newStdGen, Random(randomR))
 import Time
 
 {-# SPECIALIZE snub :: [String] -> [String] #-}
@@ -95,14 +107,23 @@ import Time
 snub :: Ord a => [a] -> [a]
 snub = map head . group . sort
 
+-- | sorted nub of list of tuples, based solely on the first element of each tuple.
 snubFst :: Ord a => [(a,b)] -> [(a,b)]
 snubFst = map head . groupBy (\(x,_) (y,_) -> x == y) . sortBy (\(x,_) (y,_) -> compare x y)
 
+-- | sort list of tuples, based on first element of each tuple.
 sortFst :: Ord a => [(a,b)] -> [(a,b)]
 sortFst = sortBy (\(x,_) (y,_) -> compare x y)
 
+-- | group list of tuples, based only on equality of the first element of each tuple.
 groupFst :: Eq a => [(a,b)] -> [[(a,b)]]
 groupFst = groupBy (\(x,_) (y,_) -> x == y)
+
+groupUnder f = groupBy (\x y -> f x == f y)
+sortUnder f = sortBy (\x y -> f x `compare` f y)
+
+sortGroupUnder f = groupUnder f . sortUnder f
+sortGroupUnderF f xs = [ (f x, xs) |  xs@(x:_) <- sortGroupUnder f xs]
 
 -- | write string to standard error
 putErr :: String -> IO ()
@@ -268,6 +289,9 @@ ioM action = catch (fmap return action) (\e -> return (fail (show e)))
 ioMp :: MonadPlus m => IO a -> IO (m a)
 ioMp action = catch (fmap return action) (\_ -> return mzero)
 
+-- | reformat a string to not be wider than a given width, breaking it up
+-- between words.
+
 paragraph :: Int -> String -> String
 paragraph maxn xs = drop 1 (f maxn (words xs)) where
     f n (x:xs) | lx < n = (' ':x) ++ f (n - lx) xs where
@@ -311,6 +335,7 @@ expandTabs' sz off (c:cs) = c: expandTabs' sz (off + 1) cs
 expandTabs' _ _ "" = ""
 
 
+-- | expand tabs into spaces in a string
 expandTabs s = expandTabs' 8 0 s
 
 
@@ -374,7 +399,7 @@ fmapRight fn = fmap f where
 {-# SPECIALIZE isConjoint :: [String] -> [String] -> Bool #-}
 {-# SPECIALIZE isDisjoint :: [Int] -> [Int] -> Bool #-}
 {-# SPECIALIZE isConjoint :: [Int] -> [Int] -> Bool #-}
-
+-- | set operations on lists. (slow!)
 isDisjoint, isConjoint :: Eq a => [a] -> [a] -> Bool
 isConjoint xs ys = or [x == y | x <- xs, y <- ys] 
 isDisjoint xs ys = not (isConjoint xs ys)
@@ -410,6 +435,7 @@ foldl' _ a []     = a
 foldl' f a (x:xs) = (foldl' f $! f a x) xs
 
 
+-- | randomly permute a list, using the standard random number generator.
 randomPermuteIO :: [a] -> IO [a]
 randomPermuteIO xs = newStdGen >>= \g -> return (randomPermute g xs)
 
@@ -420,10 +446,6 @@ randomPermute gen xs  = (head tl) : randomPermute gen' (hd ++ tail tl)
    where (idx, gen') = randomR (0,length xs - 1) gen
          (hd,  tl)   = splitAt idx xs
 
---powerSet :: [a] -> [[a]]
---powerSet [] = [[]]
---powerSet (x:xs) = xss ++ map (x:) xss
---                where xss = powerSet xs
 
 -- | compute the power set of a list
 
@@ -432,6 +454,7 @@ powerSet []     = [[]]
 powerSet (x:xs) = xss /\/ map (x:) xss
                 where xss = powerSet xs
 
+-- | interleave two lists lazily, alternating elements from them. This can be used instead of concatination to avoid space leaks in certain situations.
 (/\/)        :: [a] -> [a] -> [a]
 []     /\/ ys = ys
 (x:xs) /\/ ys = x : (ys /\/ xs)        
@@ -451,11 +474,14 @@ readHex cs = mapM readHexChar cs >>= \cs' -> return (rh $ reverse cs') where
 
 {-# SPECIALIZE overlaps :: (Int,Int) -> (Int,Int) -> Bool #-}
 
+-- | determine if two closed intervals overlap at all. 
+
 overlaps :: Ord a => (a,a) -> (a,a) -> Bool
 (a,_) `overlaps` (_,y) | y < a = False
 (_,b) `overlaps` (x,_) | b < x = False
 _ `overlaps` _ = True
 
+-- | translate a number of seconds to a string representing the duration expressed.
 showDuration :: Integral a => a -> String
 showDuration x = st "d" dayI ++ st "h" hourI ++ st "m" minI ++ show secI ++ "s" where
         (dayI, hourI) = divMod hourI' 24
@@ -463,3 +489,53 @@ showDuration x = st "d" dayI ++ st "h" hourI ++ st "m" minI ++ show secI ++ "s" 
         (minI',secI) = divMod x 60
         st _ 0 = "" 
         st c n = show n ++ c
+
+-- | behave like while(<>) in perl, go through the argument list, reading the
+-- concation of each file name mentioned or stdin if '-' is on it. If no
+-- arguments are given, read stdin. 
+
+getArgContents = do
+    as <- System.getArgs
+    let f "-" = getContents
+        f fn = readFile fn
+    cs <- mapM f as
+    if null as then getContents else return $ concat cs
+    
+
+readM :: (Monad m, Read a) => String -> m a
+readM cs = case [x | (x,t) <-  reads cs, ("","") <- lex t] of
+    [x] -> return x
+    [] -> fail "readM: no parse"
+    _ -> fail "readM: ambiguous parse"
+
+readsM :: (Monad m, Read a) => String -> m (a,String)
+readsM cs = case readsPrec 0 cs of
+    [(x,s)] -> return (x,s)
+    _ -> fail "cannot readsM"
+
+-- | Splits a list into components delimited by separators, where the
+-- predicate returns True for a separator element.  The resulting
+-- components do not contain the separators.  Two adjacent separators
+-- result in an empty component in the output.  eg.
+--
+-- @
+--   > split (=='a') "aabbaca"
+--   ["","","bb","c",""]
+-- @
+split :: (a -> Bool) -> [a] -> [[a]]
+split p s = case rest of
+                []     -> [chunk]
+                _:rest -> chunk : split p rest
+  where (chunk, rest) = break p s
+
+-- | Like 'split', except that sequences of adjacent separators are
+-- treated as a single separator. eg.
+--                                                                                      
+-- @                                                                                    
+--   > tokens (=='a') "aabbaca"                                                         
+--   ["bb","c"]                                                                         
+-- @                                                                                    
+tokens :: (a -> Bool) -> [a] -> [[a]]                                                   
+tokens p = filter (not.null) . split p                                
+
+
