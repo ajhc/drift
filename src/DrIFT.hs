@@ -104,6 +104,8 @@ derive env fname = do
 	     render . vsep $ (docs ++ sepDoc:moreDocs)
 	unless (envResultsOnly env) $ hPutStr handle body
 	hPutStr handle result
+        hFlush handle
+        
 
 addGlobals env tds    =  (envGlobalRules env,Directive):concatMap f tds where
     f x | not (envIgnoreDirectives env) = [x]
