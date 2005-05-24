@@ -11,7 +11,7 @@ ACLOCAL="${ACLOCAL} -I ./ac-macros"
 
 
 
-AC_PROGRAM_REQUIRE(hc,nhc98 ghc,              [  --with-hc=<haskell compiler>    Specify location of nhc or ghc.])
+AC_PROGRAM_REQUIRE(hc,ghc nhc98,              [  --with-hc=<haskell compiler>    Specify location of nhc or ghc.])
 AC_ARG_WITH(hcflags, 
             [  --with-hcflags=HCFLAGS  specify flags for Haskell compiler],
 	    [HCFLAGS=$withval])
