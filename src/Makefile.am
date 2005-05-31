@@ -38,7 +38,7 @@ distclean-local:
 	rm -f -- *.hi *.o *_hsc.c *_hsc.h config.log config.status
 
 depend:
-	hmake -ghc -M DrIFT.hs > depend.make 
+	ghc -M DrIFT.hs > depend.make 
 
 BINDISTNAME=$(PACKAGE)-$(VERSION)-`uname -s`-`uname -m`
 
