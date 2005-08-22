@@ -503,7 +503,14 @@ The classes @strong{Eq}, @strong{Ord}, @strong{Enum}, @strong{Show},
 Haskell report as being derivable; DrIFT provides rules for all
 these.  
 @section Other Classes
-Currently, @strong{NFData} is the only other class to have a rule.  
+Originally, @strong{NFData} (for Normal Form evaluation strategies)
+was the only other class to have a rule.  But now, there are rules for
+many more classes from 3rd-party libraries, e.g.  @strong{Haskell2Xml}
+from HaXml, @strong{Binary} from nhc98, @strong{Term} from Strafunski,
+@strong{FunctorM} for Generics, @strong{Observable} for HOOD debugging,
+@strong{Typeable} for dynamics, and so on.  For a full list, use the
+@code{--list} command-line option.
+
 @section Utilities
 @itemize @bullet
 
@@ -685,9 +692,9 @@ follows.
 >               | List Type	  -- list
 >			deriving (Eq,Show)
 @end example
-None of the rules written so far have needed to use this type
-information, which I found quite surprising.  I'd be interested to hear
-from anybody who write a rule where this information is needed.
+Few of the deriving rules supplied have actually needed to use this type
+information, which I found quite surprising.  If you do find you need to
+use it, one example is the Haskell2Xml rule.
 
 @node Pretty Printing  , Utilities, How is a Type Represented?, User-Defined Rules
 @section Pretty Printing 
