@@ -4,11 +4,17 @@ module UserRuleXml (userRulesXml) where
 import List (nub,sortBy)
 import RuleUtils -- useful to have a look at this too
 
+data Style = Old | New
+
 userRulesXml :: [RuleDef]
-userRulesXml = [("Haskell2Xml", userRuleXml, "Representation", "encode terms as XML", Nothing)]
+userRulesXml =
+ [ ("Haskell2Xml", userRuleXml Old, "Representation"
+                            , "encode terms as XML (HaXml<=1.13)", Nothing)
+ , ("Haskell2XmlNew", userRuleXml New, "Representation"
+                            , "encode terms as XML (HaXml>=1.14)", Nothing)
+ ]
 
 {- datatype that rules manipulate :-
-
 
 data Data = D {	name :: Name,			 -- type's name
 			constraints :: [(Class,Var)], 
@@ -35,15 +41,28 @@ type Rule = (Tag, Data->Doc)
 
 -}
 
-userRuleXml dat = 
-  let cs  = body dat
-      cvs = mknss cs namesupply
+userRuleXml style dat = 
+  let cs  = body dat		-- constructors
+      cvs = mknss cs namesupply	-- variables
+      name = case style of Old -> "Haskell2Xml"; New -> "Haskell2XmlNew"
   in
-  instanceheader "Haskell2Xml" dat $$
-  block (toHTfn cs cvs dat:
-         ( text "fromContents (CElem (Elem constr [] cs):etc)" $$
-           vcat (preorder cs (zipWith3 readsfn [0..] cvs cs))):
-         zipWith3 showsfn [0..] cvs cs)
+  instanceheader name dat $$
+  block (toHTfn cs cvs dat
+         : (case style of
+              Old -> ( text "fromContents (CElem (Elem constr [] cs):etc)"
+                     $$ vcat (preorder cs (zipWith readsfn cvs cs)))
+              New -> ( text "parseContents = do"
+                     $$ nest 4 (text "{ e@(Elem t _ _) <- element "
+                                  <+> text (show (map constructor cs))
+                               $$ text "; case t of"
+                               $$ nest 2 (text "_"
+                                         $$ nest 2 (vcat (preorder cs
+                                                     (zipWith parseFn cvs cs))))
+                               $$ text "}"
+                               )
+                     )
+           )
+         : zipWith3 showsfn [0..] cvs cs)
 
 toHTfn cs cvs dat =
   let typ  = name dat
@@ -186,7 +205,7 @@ simplest typ cs fv =
     closest a b = a
 
 
-
+-- showsfn (n = index) (ns = variables) (cn = constructor body)
 showsfn n ns cn =
   let cons = constructor cn
       typ  = types cn
@@ -203,7 +222,8 @@ showsfn n ns cn =
 ----
 --  text "fromContents (CElem (Elem constr [] cs):etc)" $$
 ----
-readsfn n ns cn =
+-- readsfn (ns = variables) (cn = constructor body)
+readsfn ns cn =
   let cons   = text (constructor cn)
       typ    = types cn
       num    = length ns - 1
@@ -240,6 +260,24 @@ readsfn n ns cn =
 preorder cs =
     map snd . reverse . sortBy (\(a,_) (b,_)-> compare a b) . zip (map constructor cs)
 
+
+-- parseFn (ns = variables) (cn = constructor body)
+parseFn ns cn =
+  let cons = constructor cn
+      arity = length (types cn)
+      var v = text ";" <+> v <+> text "<- parseContents"
+      intro = text "|" <+> text (show cons)
+              <+> text "`isPrefixOf` t -> interior e $"
+  in
+  case arity of
+    0 -> intro <+> nest 8 (text "return" <+> text cons)
+    1 -> intro <+> nest 8 (text "fmap" <+> text cons <+> text "parseContents")
+    _ -> intro $$  nest 4 (text "do {" <+> head ns <+> text "<- parseContents"
+                          $$ nest 3 (vcat (map var (tail ns))
+                                    $$ text "; return (" <> text cons
+                                       <+> hsep ns <> text ")"
+                                    $$ text "}")
+                          )
 
 --
 
