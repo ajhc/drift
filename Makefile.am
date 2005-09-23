@@ -3,11 +3,12 @@ AUTOMAKE_OPTIONS = no-dependencies foreign
 
 
 
-SUBDIRS	= ac-macros src docs example
+SUBDIRS	= src docs example
 
-EXTRA_DIST = configure.in \
+EXTRA_DIST = configure.ac \
              reconf Changelog TODO README.old drift-ghc.in code \
-             code/FunctorM.hs code/GhcBinary.hs code/README.txt
+             code/FunctorM.hs code/GhcBinary.hs code/README.txt \
+	     ac-macros/acincludepackage.m4
 
 bin_SCRIPTS = drift-ghc
 

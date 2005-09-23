@@ -26,7 +26,6 @@ AC_SUBST(HCFLAGS)
 
 AC_OUTPUT( 
 	Makefile 
-        ac-macros/Makefile
 	src/Makefile 
 	docs/Makefile
 	example/Makefile
