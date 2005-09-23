@@ -25,25 +25,25 @@ SUFFIXES = .hs .lhs .o .hi
 # all: DrIFT
 
 .hs.o:
-	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $< 
+	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $<
 .lhs.o:
-	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $< 
+	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $<
 %.hi: %.o
 	@:
 
-clean: 
-	rm -f -- *.hi *.o *_hsc.c *_hsc.h 
+clean:
+	rm -f -- *.hi *.o *_hsc.c *_hsc.h
 
-distclean-local: 
+distclean-local:
 	rm -f -- *.hi *.o *_hsc.c *_hsc.h config.log config.status
 
 depend:
-	ghc -M DrIFT.hs > depend.make 
+	ghc -M -optdep-f -optdepdepend.make DrIFT.hs
 
 BINDISTNAME=$(PACKAGE)-$(VERSION)-`uname -s`-`uname -m`
 
-# $(PACKAGE)_static 
-bin-dist: $(PACKAGE) 
+# $(PACKAGE)_static
+bin-dist: $(PACKAGE)
 	$(RM) -rf -- $(BINDISTNAME)
 	mkdir $(BINDISTNAME)
 	strip -- $(PACKAGE) || true

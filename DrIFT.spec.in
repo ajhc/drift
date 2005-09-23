@@ -8,7 +8,7 @@ Summary: DeRiving Instances From Types
 Name: DrIFT
 Version: %{version}
 Release: %{release}
-Copyright: MIT
+License: LICENSE
 Group: Applications/Development
 BuildRoot: /var/tmp/%{progname}-%{version}-%{release}-buildroot
 Source: http://repetae.net/john/computer/haskell/%{progname}/drop/%{progname}-%{version}.tar.gz
@@ -32,6 +32,8 @@ make docs
 
 %install
 make prefix=$RPM_BUILD_ROOT%{prefix} install
+rm -f $RPM_BUILD_ROOT%{prefix}/info/dir
+rm -f $RPM_BUILD_ROOT%{prefix}/lib/debug/usr/bin/DrIFT.debug
 
 
 %files
@@ -39,8 +41,8 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install
 %attr(-, root, root) %doc LICENSE
 %attr(-, root, root) %doc docs/drift.ps
 %attr(-, root, root) %doc docs/drift.html
-#%attr(-, root, root) %doc LICENSE
 %attr(-, root, root) %{prefix}/bin/DrIFT
 %attr(-, root, root) %{prefix}/bin/drift-ghc
-#%attr(-, root, root) %{prefix}/man/man1/ginsu.1.gz
+#%attr(-, root, root) %{prefix}/info/dir
+%attr(-, root, root) %{prefix}/info/drift.info.gz
 

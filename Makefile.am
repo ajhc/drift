@@ -8,7 +8,7 @@ SUBDIRS	= src docs example
 EXTRA_DIST = configure.ac \
              reconf Changelog TODO README.old drift-ghc.in code \
              code/FunctorM.hs code/GhcBinary.hs code/README.txt \
-	     ac-macros/acincludepackage.m4
+	     ac-macros/acincludepackage.m4 LICENSE
 
 bin_SCRIPTS = drift-ghc
 
