@@ -3,6 +3,7 @@ module UserRules(userRules) where
 
 import RuleUtils(RuleDef) -- gives some examples 
 
+import UserRuleArbitrary
 import UserRuleBinary
 import UserRuleXml
 import UserRulesGeneric
@@ -14,5 +15,5 @@ import qualified RuleMonoid
 
 -- add your rules to this list
 userRules :: [RuleDef]
-userRules = userRulesXml ++ userRulesBinary ++ userRulesGeneric ++ userRulesGhcBinary  ++ RuleUtility.rules ++ RuleFunctorM.rules ++ RuleMonoid.rules
+userRules = userRulesXml ++ userRulesBinary ++ userRulesGeneric ++ userRulesGhcBinary  ++ RuleUtility.rules ++ RuleFunctorM.rules ++ RuleMonoid.rules ++ UserRuleArbitrary.rules
 
