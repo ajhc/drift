@@ -396,13 +396,9 @@ Runhugs) to run DrIFT over a file type :-
 
 @code{DrIFT @var{filename}}
 
-Alternatively, within Hugs, use :-
+Alternatively, for Hugs, use :-
 
-@code{:s +l} (make literate scripts the default)
-
-@code{:l derive.lhs} (load derive)
-
-@code{DrIFT ["@var{filename}"]} (run DrIFT over filename)
+@code{runhugs DrIFT @var{filename}} (run DrIFT over filename)
 
 @node Command Syntax, Emacs DrIFT mode, Command Line, User Guide
 @section Command Syntax
