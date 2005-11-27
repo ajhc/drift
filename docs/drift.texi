@@ -497,7 +497,7 @@ hugs menu.
 @chapter Standard Rules
 Heres a listing of the rules that come pre-defined with DrIFT.  If you
 want a more detailed idea of how they work, their definitions are in the
-file @file{StandardRules.lhs}, and are (fairly) well documented.  In the
+file @file{StandardRules.hs}, and are (fairly) well documented.  In the
 following list the @strong{highlighted} text is the name of the rule,
 as used in commands. The naming convention for rules is names
 starting with a capital generate an instance for the class of the same
@@ -619,7 +619,7 @@ name of the rule, and is used in commands in an input file. The
 function maps between the abstract representation of a datatype and text
 to be output (A sort of un-parser, if you like). The best way to
 understand this is to have a look at the existing rules in
-@file{StandardRules.lhs}.  This module is quite well documented. 
+@file{StandardRules.hs}.  This module is quite well documented. 
 
 @node How is a Type Represented?, Pretty Printing  , The Basic Idea, User-Defined Rules
 @section How is a Type Represented?
