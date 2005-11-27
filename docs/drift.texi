@@ -115,13 +115,17 @@ running @code{DrIFT -l}.
 
 Binary:              
    Binary            efficient binary encoding of terms
+   GhcBinary         byte sized binary encoding of terms
 Debugging:           
    Observable        HOOD observable
 General:             
    NFData            provides 'rnf' to reduce to normal form (deepSeq)
    Typeable          derive Typeable for Dynamic
 Generics:            
+   FunctorM          derive reasonable fmapM implementation
    HFoldable         Strafunski hfoldr
+   Monoid            derive reasonable Data.Monoid implementation
+   RMapM             derive reasonable rmapM implementation
    Term              Strafunski representation via Dynamic
 Prelude:             
    Bounded           
@@ -132,13 +136,20 @@ Prelude:
    Show              
 Representation:      
    ATermConvertible  encode terms in the ATerm format
-   Haskell2Xml       encode terms as XML
+   Haskell2Xml       encode terms as XML (HaXml<=1.13)
+   XmlContent        encode terms as XML (HaXml>=1.14)
 Utility:             
+   Parse             parse values back from standard 'Show'
+   Query             provide a QueryFoo class with 'is', 'has',
+                       'from', and 'get' routines
+   from              provides fromFoo for each constructor
+   get               for label 'foo' provide foo_g to get it
    has               hasfoo for record types
    is                provides isFoo for each constructor
    test              output raw data for testing
    un                provides unFoo for unary constructors
    update            for label 'foo' provides 'foo_u' to update it
+                       and foo_s to set it
 
 @end verbatim
 
@@ -505,7 +516,7 @@ these.
 @section Other Classes
 Originally, @strong{NFData} (for Normal Form evaluation strategies)
 was the only other class to have a rule.  But now, there are rules for
-many more classes from 3rd-party libraries, e.g.  @strong{Haskell2Xml}
+many more classes from 3rd-party libraries, e.g.  @strong{XmlContent}
 from HaXml, @strong{Binary} from nhc98, @strong{Term} from Strafunski,
 @strong{FunctorM} for Generics, @strong{Observable} for HOOD debugging,
 @strong{Typeable} for dynamics, and so on.  For a full list, use the
@@ -580,7 +591,7 @@ what information is stored about a particular type.
 
 @node User-Defined Rules, Installation, Standard Rules, Top
 @chapter Rolling Your Own
-Programmers who only wish to use the pre-defined rules in define don't need to
+Programmers who only wish to use the pre-defined rules in DrIFT don't need to
 read or understand the following section.  However, 
 as well as using the supplied rules, users are encouraged to add their
 own.  There is a stub module @file{UserRules.hs} in the source, to
@@ -590,7 +601,7 @@ If a compiled version of DrIFT is being used, the program will then
 have to be recompiled before the new rules can be used.  However, if the
 Runhugs standalone interpreter is used, this is not necessary.  Due to
 the way Runhugs searches for modules to load, a user may have many
-copies of the UserRules module .The UserRules module in the current
+copies of the UserRules module. The UserRules module in the current
 directory will be loaded first.  If that is not present, then the
 @code{HUGSPATH} environment variable is searched for the module.  So it is
 possible to have a default UserRules module, and specialised ones for
