@@ -1,27 +1,32 @@
--- stub module to add your own rules.
+-- expanded from stub module to add new rules.
 module UserRuleXml (userRulesXml) where
 
 import List (nub,sortBy)
 import RuleUtils -- useful to have a look at this too
 
-data Style = Old | New
-
 userRulesXml :: [RuleDef]
 userRulesXml =
- [ ("Haskell2Xml", userRuleXml Old, "Representation"
+ [ ("Haskell2Xml", userRuleXmlOld, "Representation"
                             , "encode terms as XML (HaXml<=1.13)", Nothing)
- , ("Haskell2XmlNew", userRuleXml New, "Representation"
+ , ("XmlContent", userRuleXmlNew, "Representation"
                             , "encode terms as XML (HaXml>=1.14)", Nothing)
+ , ("Parse", userRuleTextParse, "Utility"
+                            , "parse values back from standard 'Show'"
+                            , Just "Generates the Parse class supplied in\
+				\ module Text.ParserCombinators.TextParser\
+				\ as part of HaXml>=1.14.  This represents\
+				\ a replacement for the Prelude.Read class,\
+				\ with better error messages.")
  ]
 
 {- datatype that rules manipulate :-
 
 data Data = D {	name :: Name,			 -- type's name
-			constraints :: [(Class,Var)], 
-			vars :: [Var],		 -- Parameters
-			body :: [Body],
-			derives :: [Class],	 -- derived classes
-			statement :: Statement}  -- type of statement
+		constraints :: [(Class,Var)], 
+		vars :: [Var],		 -- Parameters
+		body :: [Body],
+		derives :: [Class],	 -- derived classes
+		statement :: Statement}  -- type of statement
 	   | Directive				 --|
 	   | TypeName Name			 --| used by derive (ignore)
 		deriving (Eq,Show) 
@@ -41,28 +46,42 @@ type Rule = (Tag, Data->Doc)
 
 -}
 
-userRuleXml style dat = 
+userRuleXmlOld dat = 
   let cs  = body dat		-- constructors
       cvs = mknss cs namesupply	-- variables
-      name = case style of Old -> "Haskell2Xml"; New -> "Haskell2XmlNew"
   in
-  instanceheader name dat $$
+  instanceheader "Haskell2Xml" dat $$
   block (toHTfn cs cvs dat
-         : (case style of
-              Old -> ( text "fromContents (CElem (Elem constr [] cs):etc)"
-                     $$ vcat (preorder cs (zipWith readsfn cvs cs)))
-              New -> ( text "parseContents = do"
-                     $$ nest 4 (text "{ e@(Elem t _ _) <- element "
-                                  <+> text (show (map constructor cs))
-                               $$ text "; case t of"
-                               $$ nest 2 (text "_"
-                                         $$ nest 2 (vcat (preorder cs
-                                                     (zipWith parseFn cvs cs))))
-                               $$ text "}"
-                               )
-                     )
-           )
+         : ( text "fromContents (CElem (Elem constr [] cs):etc)"
+              $$ vcat (preorder cs (zipWith readsfn cvs cs)))
          : zipWith3 showsfn [0..] cvs cs)
+
+userRuleXmlNew dat =
+  let cs  = body dat		-- constructors
+      cvs = mknss cs namesupply	-- variables
+  in
+  instanceheader "HTypeable" dat $$
+  block [toHTfn cs cvs dat] $$
+  instanceheader "XmlContent" dat $$
+  block (
+    case cs of
+      [c] -> text "parseContents = do"
+             $$ nest 4 (text "{ inElementWith (flip isPrefixOf)"
+                       <+> text (show (constructor c)) <+> text "$"
+                       $$ parseFn True (head cvs) c
+                       $$ text "}"
+                       )
+      _ -> text "parseContents = do"
+            $$ nest 4 (text "{ e@(Elem t _ _) <- elementWith (flip isPrefixOf)"
+                      <+> text (show (preorder cs (map constructor cs)))
+                      $$ text "; case t of"
+                      $$ nest 2 (text "_"
+                                $$ nest 2 (vcat (preorder cs
+                                                       (zipWith (parseFn False)
+                                                                cvs cs))))
+                      $$ text "}"
+                      )
+    : zipWith3 showsfn [0..] cvs cs)
 
 toHTfn cs cvs dat =
   let typ  = name dat
@@ -166,7 +185,7 @@ simplest typ cs fv =
   where
 
     find :: String -> Type -> (Maybe Int,Doc)
-    find v (Arrow t1 t2)  = (Nothing,error "can't derive Haskell2XML for arrow type")
+    find v (Arrow t1 t2)  = (Nothing,error "can't derive Haskell2Xml/HTypeable for arrow type")
 --    find v (Apply t1 t2)  = let (d1,pat1) = find v t1
 --                                (d2,pat2) = find v t2
 --                            in perhaps (combine [d1,d2])
@@ -262,22 +281,20 @@ preorder cs =
 
 
 -- parseFn (ns = variables) (cn = constructor body)
-parseFn ns cn =
+parseFn single ns cn =
   let cons = constructor cn
       arity = length (types cn)
       var v = text ";" <+> v <+> text "<- parseContents"
-      intro = text "|" <+> text (show cons)
-              <+> text "`isPrefixOf` t -> interior e $"
+      intro = if single then empty 
+              else text "|" <+> text (show cons)
+                   <+> text "`isPrefixOf` t -> interior e $"
   in
   case arity of
     0 -> intro <+> nest 8 (text "return" <+> text cons)
     1 -> intro <+> nest 8 (text "fmap" <+> text cons <+> text "parseContents")
-    _ -> intro $$  nest 4 (text "do {" <+> head ns <+> text "<- parseContents"
-                          $$ nest 3 (vcat (map var (tail ns))
-                                    $$ text "; return (" <> text cons
-                                       <+> hsep ns <> text ")"
-                                    $$ text "}")
-                          )
+    _ -> intro $$  nest 8 (text "return" <+> text cons
+                          <+> (fsep (replicate arity
+                                               (text "`apply` parseContents"))))
 
 --
 
@@ -298,3 +315,61 @@ mypattern :: Constructor -> [a] -> [Doc] -> Doc
 mypattern c l ns =
   if null l then text c
   else parens (hsep (text c : take (length l) ns))
+
+
+-- ----------------------------------------------------------------------- --
+userRuleTextParse dat =
+  let cs  = body dat		-- constructors
+      cvs = mknss cs namesupply	-- variables
+      isNullary c = null (types c)
+  in
+  instanceheader "Parse" dat $$
+  nest 4 (
+    case cs of
+      []  -> empty
+      _ | all isNullary cs ->
+             text "parse = enumeration" <+> text (show (name dat))
+             <+> text "["
+             <+> fsep ( text (constructor (head cs))
+                      : map (\c-> text "," <+> text (constructor c))
+                           (tail cs))
+             <+> text "]"
+        | otherwise ->
+             text "parse = constructors"
+             $$ nest 4 (text "[" <+> textParseFn (head cvs) (head cs)
+                       $$ vcat (zipWith (\cv c-> text "," <+> textParseFn cv c)
+                                        (tail cvs) (tail cs))
+                       $$ text "]"
+                       )
+  )
+
+-- textParseFn (ns = variables) (cn = constructor body)
+textParseFn ns cn =
+  let cons = constructor cn
+      arity = length (types cn)
+      fields = labels cn
+      doField f = text "`discard` isWord \",\" `apply` field" <+> text (show f)
+  in
+  fsep ( text "(" <+> text (show cons)
+       : text ","
+         <+> nest 2 
+             (case arity of
+                0 -> text "return" <+> text cons
+                1 | null fields ->
+                     text "fmap" <+> text cons <+> text "parse"
+                _ | null fields ->
+                     text "return" <+> text cons
+                     <+> (fsep (replicate arity (text "`apply` parse")))
+                  | otherwise ->
+                     text "return" <+> text cons
+                     <+> fsep ( text "`discard` isWord \"{\" `apply` field"
+                                             <+> text (show (head fields))
+                              : map doField (tail fields)
+                              ++ [text "`discard` isWord \"}\""]
+                              )
+             )
+       : text ")"
+       : [])
+
+
+-- ----------------------------------------------------------------------- --
