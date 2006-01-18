@@ -6,7 +6,7 @@ DrIFT_SOURCES = ChaseImports.hs CommandP.hs DataP.lhs DrIFT.hs GetOpt.hs \
    Literate.lhs ParseLib2.hs PreludData.hs Pretty.lhs RuleUtils.hs \
    StandardRules.hs UserRuleBinary.hs UserRulesGeneric.hs \
    UserRules.hs UserRuleXml.hs Version.hs GenUtil.hs UserRuleGhcBinary.hs \
-   RuleUtility.hs RuleFunctorM.hs RuleMonoid.hs UserRuleArbitrary
+   RuleUtility.hs RuleFunctorM.hs RuleMonoid.hs UserRuleArbitrary.hs
 
 # DrIFT_static_SOURCES = $(DrIFT_SOURCES)
 # DrIFT_static_LINK = $(DrIFT_LINK) -static -optl-static -ldl
