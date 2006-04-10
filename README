@@ -32,6 +32,12 @@ location of a Haskell compiler as follows:
   make install
 
 
+If you have pulled the source from the darcs repository, you must first run the
+'reconf' script by typing.
+
+  sh reconf
+
+
 ------------------------------------------------------------------------------
 
 To use DrIFT, heed the following instructions (which were taken from the
@@ -41,8 +47,8 @@ DrIFT v1.0 distribution).
   ------------
   copy the 'DrIFT' executable to somewhere on your path
 
-  set DERIVEPATH to the list of directories you wish to search for 
-  modules / interfaces. 
+  set DERIVEPATH to the list of directories you wish to search for
+  modules / interfaces.
 
   DERIVEPATH is quite fussy about the format the list should take :-
     * each path should be separated by ':'
