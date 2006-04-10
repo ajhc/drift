@@ -25,6 +25,8 @@
 ./UserRuleXml.o : ./RuleUtils.hi
 ./UserRuleBinary.o : ./UserRuleBinary.hs
 ./UserRuleBinary.o : ./RuleUtils.hi
+./UserRuleArbitrary.o : ./UserRuleArbitrary.hs
+./UserRuleArbitrary.o : ./RuleUtils.hi
 ./Version.o : ./Version.hs
 ./GenUtil.o : ./GenUtil.hs
 ./StandardRules.o : ./StandardRules.hs
@@ -41,6 +43,7 @@
 ./UserRules.o : ./UserRulesGeneric.hi
 ./UserRules.o : ./UserRuleXml.hi
 ./UserRules.o : ./UserRuleBinary.hi
+./UserRules.o : ./UserRuleArbitrary.hi
 ./UserRules.o : ./RuleUtils.hi
 ./ChaseImports.o : ./ChaseImports.hs
 ./ChaseImports.o : ./GenUtil.hi

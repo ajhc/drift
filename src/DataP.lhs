@@ -7,25 +7,27 @@ needs to be fixed.
 >module DataP (Statement(..),Data(..),Type(..),Body(..),
 >		Name,Var,Class,Constructor,
 >		datadecl,newtypedecl)
->where 
+>where
 
 >import ParseLib2
 >import Char
+>import List
+>import Monad
 
 
 >data Statement = DataStmt | NewTypeStmt deriving (Eq,Show)
 >data Data = D {	name :: Name,		-- type name
->			constraints :: [(Class,Var)], 
+>			constraints :: [(Class,Var)],
 >			vars :: [Var],		-- Parameters
 >			body :: [Body],
 >			derives :: [Class],		-- derived classes
 >			statement :: Statement}
->	   | Directive 
+>	   | Directive
 >	   | TypeName Name
->		deriving (Eq,Show) 
+>		deriving (Eq,Show)
 >data Body = Body { constructor :: Constructor,
 >		    labels :: [Name],
->		    types :: [Type]} deriving (Eq,Show) 
+>		    types :: [Type]} deriving (Eq,Show)
 >type Name = String
 >type Var = String
 >type Class = String
@@ -33,9 +35,9 @@ needs to be fixed.
 >----------------------------------------------------------------------------
 >
 >datadecl :: Parser Data
->datadecl = do 
+>datadecl = do
 >		symbol "data"
->               con <- opt constraint 
+>               con <- opt constraint
 >	        x <- constructorP
 >	        xs <- many variable
 >	        symbol "="
@@ -44,19 +46,19 @@ needs to be fixed.
 >               return $D x con xs b d DataStmt
 
 >newtypedecl :: Parser Data
->newtypedecl = do 
+>newtypedecl = do
 >	symbol "newtype"
 >	con <- opt constraint
 >	x <- constructorP
 >	xs <- many variable
 >	symbol "="
->	b <- conrecdecl 
+>	b <- conrecdecl
 >	d <- opt deriveP
 >       return $ D x con xs [b] d NewTypeStmt
 
 >---------------------------------------------------------------------------
 >constructorP = token $
->       do {x <- upper;xs <- many alphanum;return (x:xs)} +++ do 
+>       do {x <- upper;xs <- many alphanum;return (x:xs)} +++ do
 >               string "(:"
 >               y <- many1 $ sat (\x -> (not . isAlphaNum) x  && (not . isSpace) x && (not . (== ')')) x )
 >               char ')'
@@ -67,10 +69,10 @@ needs to be fixed.
 >	x <- char ':'
 >	y <- many1 $ sat (\x -> (not . isAlphaNum) x  && (not . isSpace) x)
 >	return (x:y)
->	
+>
 
 >variable = identifier [ "data","deriving","newtype", "type",
->			"instance", "class", "module", "import", 
+>			"instance", "class", "module", "import",
 >			"infixl", "infix","infixr", "default"]
 
 >condecl = do
@@ -83,7 +85,7 @@ needs to be fixed.
 >	(ls,ts) <- record +++ fmap (\a -> ([],a)) (many type2)
 >       return $ Body x ls ts
 
->-- haven't worked infixes into the program yet, as they cause problems 
+>-- haven't worked infixes into the program yet, as they cause problems
 >-- throughout
 >infixdecl = do
 >	t1 <- type2
@@ -99,7 +101,7 @@ needs to be fixed.
 
 >constraint = do{x <- constrs; symbol "=>"; return x}
 >	where
->	constrs = fmap (\x -> [x]) one +++ 
+>	constrs = fmap (\x -> [x]) one +++
 >		  bracket (symbol "(") (one `sepby` symbol ",") (symbol ")")
 >	one = do{c <- constructorP; v <- variable; return (c,v)}
 
@@ -107,7 +109,7 @@ needs to be fixed.
 >	where
 >	one = fmap (\x -> [x]) constructorP -- well, it has the same form
 >	more = bracket  (symbol "(")
->			(constructorP `sepby` symbol ",")
+>			(((type0 >>= return . show)) `sepby` symbol ",")
 >			(symbol ")")
 >---------------------------------------------------------------------------
 >data Type	= Arrow Type Type -- fn
@@ -116,7 +118,16 @@ needs to be fixed.
 >		| Con String      -- constructor
 >		| Tuple [Type]	  -- tuple
 >		| List Type	  -- list
->			deriving (Eq,Show)
+>			deriving (Eq)
+
+>instance Show Type where
+>       show (Var s) = s
+>       show (Con s) = s
+>       show (Tuple ts) = "(" ++ concat (intersperse "," (map show ts)) ++ ")"
+>       show (List t) = "[" ++ show t ++ "]"
+>       show (Arrow a b) = show a ++ " -> " ++ show b
+>       show (LApply t ts) = concat $ intersperse " " (map show (t:ts))
+
 >type0 :: Parser Type
 >type0 = type1 `chainr1` fmap (const Arrow) (symbol "->")
 >--type1 = type2 `chainl1` (return Apply)
@@ -141,8 +152,8 @@ needs to be fixed.
 >	      f ts = Tuple ts
 
 >--record entry
->rectype :: Parser (String,Type) 
->rectype = do	
+>rectype :: Parser (String,Type)
+>rectype = do
 >	s <- variable
 >	symbol "::"
 >       t <- type0
