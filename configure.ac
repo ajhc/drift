@@ -1,6 +1,9 @@
 
-AC_INIT(src/DrIFT.hs)
-AM_INIT_AUTOMAKE(DrIFT,2.2.0)
+AC_INIT([DrIFT],[2.2.0],john@repetae.net, [DrIFT])
+AC_CONFIG_SRCDIR(src/DrIFT.hs)
+AC_CONFIG_MACRO_DIR(ac-macros)
+AC_CONFIG_AUX_DIR(ac-macros)
+AM_INIT_AUTOMAKE([foreign no-dependencies])
 
 AC_CANONICAL_HOST
 AC_PROG_CC
@@ -23,6 +26,7 @@ AC_PATH_PROGS(SH, sh)
 
 AC_SUBST(HC)
 AC_SUBST(HCFLAGS)
+AC_SUBST(PACKAGE)
 
 AC_OUTPUT( 
 	Makefile 
