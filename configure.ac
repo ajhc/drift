@@ -31,7 +31,6 @@ AC_SUBST(PACKAGE)
 AC_OUTPUT( 
 	Makefile 
 	src/Makefile 
-	docs/Makefile
 	example/Makefile
 	src/Version.hs
         

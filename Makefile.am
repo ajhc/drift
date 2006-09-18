@@ -1,15 +1,18 @@
 AUTOMAKE_OPTIONS = no-dependencies foreign
 ACLOCAL_AMFLAGS=-I ac-macros
 
+info_TEXINFOS = docs/drift.texi
+
+docs/drift.html: docs/drift.texi
+	texi2html -monolithic $< -o $@
 
 
-
-SUBDIRS	= src docs example
+SUBDIRS	= src example
 
 EXTRA_DIST = configure.ac \
              Changelog TODO README.old drift-ghc.in code \
              code/FunctorM.hs code/GhcBinary.hs code/README.txt \
-	     ac-macros/acincludepackage.m4 LICENSE
+	     ac-macros/acincludepackage.m4 LICENSE docs/drift.html
 
 bin_SCRIPTS = drift-ghc
 
