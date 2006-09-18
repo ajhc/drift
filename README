@@ -32,10 +32,11 @@ location of a Haskell compiler as follows:
   make install
 
 
-If you have pulled the source from the darcs repository, you must first run the
-'reconf' script by typing.
+If you have pulled the source from the darcs repository, you must first build
+the autotools scripts by running
 
-  sh reconf
+ automake -a
+ autoreconf
 
 
 ------------------------------------------------------------------------------
