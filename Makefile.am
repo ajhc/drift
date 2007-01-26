@@ -49,7 +49,6 @@ rpm: depend $(PACKAGE_NAME).spec dist
 depend:
 	$(MAKE) -C src depend
 
-docs:
-	$(MAKE) -C docs drift.html drift.ps
+docs: docs/drift.html docs/drift.ps
 
 .PHONY: docs depend rpm publish bin-dist
