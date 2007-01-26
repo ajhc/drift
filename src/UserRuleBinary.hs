@@ -1,40 +1,12 @@
--- stub module to add your own rules.
 module UserRuleBinary (userRulesBinary) where
 
 import List (nub,intersperse)
-import RuleUtils -- useful to have a look at this too
+import RuleUtils
 
 userRulesBinary = [
-    ("Binary", userRuleBinary, "Binary", "efficient binary encoding of terms", Nothing)
+    ("Binary", userRuleBinary, "Binary", "Data.Binary binary encoding of terms", Nothing)
     ]
 
-{- datatype that rules manipulate :-
-
-
-data Data = D {	name :: Name,			 -- type's name
-			constraints :: [(Class,Var)],
-			vars :: [Var],		 -- Parameters
-			body :: [Body],
-			derives :: [Class],	 -- derived classes
-			statement :: Statement}  -- type of statement
-	   | Directive				 --|
-	   | TypeName Name			 --| used by derive (ignore)
-		deriving (Eq,Show)
-
-data Body = Body { constructor :: Constructor,
-		    labels :: [Name], -- [] for a non-record datatype.
-		    types :: [Type]} deriving (Eq,Show)
-
-data Statement = DataStmt | NewTypeStmt deriving (Eq,Show)
-
-type Name = String
-type Var = String
-type Class = String
-type Constructor = String
-
-type Rule = (Tag, Data->Doc)
-
--}
 
 
 -- useful helper things
@@ -72,60 +44,49 @@ instanceheader cls dat =
 userRuleBinary dat =
   let cs  = body dat
       cvs = mknss cs namesupply
-      k   = (ceiling . logBase 2 . realToFrac . length) cs
+      --k   = (ceiling . logBase 256 . realToFrac . length) cs
+      k = length cs
   in
-  instanceheader "Binary" dat $$
+  instanceheader "Data.Binary.Binary" dat $$
   block (  zipWith3 (putfn k) [0..] cvs cs
-        ++ getfn k [0..] cvs cs
-        :  getFfn k [0..] cvs cs
-        :  zipWith (sizefn k) cvs cs
+        ++ [getfn k [0..] cvs cs]
         )
 
-putfn k n cv c =
-  text "put bh" <+> ppCons cv c <+> text "= do" $$
+putfn 1 _ [] c =
+    text "put" <+> ppCons [] c <+> text "= return ()"
+putfn 1 _ cv c =
+  text "put" <+> ppCons cv c <+> text "= do" $$
   nest 8 (
-    text "pos <- putBits bh" <+> text (show k) <+> text (show n) $$
-    vcat (map (text "put bh" <+>) cv) $$
-    text "return pos"
+    vcat (map (text "Data.Binary.put" <+>) cv)
+  )
+putfn _ n cv c =
+  text "put" <+> ppCons cv c <+> text "= do" $$
+  nest 8 (
+    text "Data.Binary.putWord8" <+> text (show n) $$
+    vcat (map (text "Data.Binary.put" <+>) cv)
   )
 
 ppCons cv c = mkpattern (constructor c) (types c) cv
 
-getfn k ns cvs cs =
-  text "get bh = do" $$
+getfn _ _ [[]] [c] =
+    text "get = return" <+> ppCons [] c
+getfn _ _ [vs] [c] =
+  text "get = do" $$
+    vcat (map (\v-> v <+> text "<-" <+> text "get") vs) $$
+    text "return" <+> ppCons vs c
+getfn _ ns cvs cs =
+  text "get = do" $$
   nest 8 (
-    text "h <- getBits bh" <+> text (show k) $$
+    text "h <- Data.Binary.getWord8"  $$
     text "case h of" $$
     nest 2 ( vcat $
       zipWith3 (\n vs c-> text (show n) <+> text "-> do" $$
                           nest 6 (
-                            vcat (map (\v-> v <+> text "<-" <+> text "get bh") vs) $$
+                            vcat (map (\v-> v <+> text "<-" <+> text "Data.Binary.get") vs) $$
                             text "return" <+> ppCons vs c
                           ))
                ns cvs cs ++ [ text "_ -> fail \"invalid binary data found\"" ]
     )
   )
 
-getFfn k ns cvs cs =
-  text "getF bh p =" <+>
-  nest 8 (
-    text "let (h,p1) = getBitsF bh 1 p in" $$
-    text "case h of" $$
-    nest 2 ( vcat $
-      zipWith3 (\n vs c-> text (show n) <+> text "->" <+>
-                          parens (cons c <> text ",p1") <+>
-                          hsep (map (\_-> text "<< getF bh") vs))
-               ns cvs cs ++ [ text "_ -> fail \"invalid binary data found\"" ]
-    )
-  )
-  where cons =  text . constructor
-
-sizefn k [] c =
-  text "sizeOf" <+> ppCons [] c <+> text "=" <+> text (show k)
-sizefn k cv c =
-  text "sizeOf" <+> ppCons cv c <+> text "=" <+> text (show k) <+> text "+" <+>
-  hsep (intersperse (text "+") (map (text "sizeOf" <+>) cv))
-
-
--- end of binary derivation
 
