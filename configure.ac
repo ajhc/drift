@@ -15,7 +15,7 @@ ACLOCAL="${ACLOCAL} -I ./ac-macros"
 
 
 AC_PROGRAM_REQUIRE(hc,ghc,              [  --with-hc=<haskell compiler>    Specify location of ghc.])
-AC_ARG_WITH(hcflags, 
+AC_ARG_WITH(hcflags,
             [  --with-hcflags=HCFLAGS  specify flags for Haskell compiler],
 	    [HCFLAGS=$withval])
 
@@ -27,12 +27,12 @@ AC_SUBST(HC)
 AC_SUBST(HCFLAGS)
 AC_SUBST(PACKAGE)
 
-AC_OUTPUT( 
-	Makefile 
-	src/Makefile 
+AC_OUTPUT(
+	Makefile
+	src/Makefile
 	example/Makefile
 	src/Version.hs
-        
+
         DrIFT.spec
         drift-ghc
 )

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 -- A Haskell port of GNU's getopt library
--- 
+--
 -- Sven Panne <Sven.Panne@informatik.uni-muenchen.de> Oct. 1996; last change: Jul. 1998
 --
 -- Two rather obscure features are missing: The Bash 2.0 non-option hack (if you don't
@@ -12,7 +12,7 @@
 --    * To enforce a coherent description of options and arguments, there are explanation
 --      fields in the option/argument descriptor.
 --    * Error messages are now more informative, but no longer POSIX compliant... :-(
--- 
+--
 -- And a final Haskell advertisement: The GNU C implementation uses well over 1100 lines,
 -- we need only 199 here, including a 46 line example! :-)
 -----------------------------------------------------------------------------------------
@@ -188,11 +188,11 @@ test order cmdline = case getOpt order options cmdline of
 -- putStr (test Permute ["--ver","foo"])
 --    ==> option `--ver' is ambiguous; could be one of:
 --          -v      --verbose             verbosely list files
---          -V, -?  --version, --release  show version info   
+--          -V, -?  --version, --release  show version info
 --        Usage: foobar [OPTION...] files...
---          -v        --verbose             verbosely list files  
---          -V, -?    --version, --release  show version info     
---          -o[FILE]  --output[=FILE]       use FILE for dump     
+--          -v        --verbose             verbosely list files
+--          -V, -?    --version, --release  show version info
+--          -o[FILE]  --output[=FILE]       use FILE for dump
 --          -n USER   --name=USER           only dump USER's files
 -----------------------------------------------------------------------------------------
 -}

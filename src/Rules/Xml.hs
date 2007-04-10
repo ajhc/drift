@@ -22,18 +22,18 @@ rules =
 {- datatype that rules manipulate :-
 
 data Data = D {	name :: Name,			 -- type's name
-		constraints :: [(Class,Var)], 
+		constraints :: [(Class,Var)],
 		vars :: [Var],		 -- Parameters
 		body :: [Body],
 		derives :: [Class],	 -- derived classes
 		statement :: Statement}  -- type of statement
 	   | Directive				 --|
 	   | TypeName Name			 --| used by derive (ignore)
-		deriving (Eq,Show) 
+		deriving (Eq,Show)
 
 data Body = Body { constructor :: Constructor,
 		    labels :: [Name], -- [] for a non-record datatype.
-		    types :: [Type]} deriving (Eq,Show) 
+		    types :: [Type]} deriving (Eq,Show)
 
 data Statement = DataStmt | NewTypeStmt deriving (Eq,Show)
 
@@ -46,7 +46,7 @@ type Rule = (Tag, Data->Doc)
 
 -}
 
-userRuleXmlOld dat = 
+userRuleXmlOld dat =
   let cs  = body dat		-- constructors
       cvs = mknss cs namesupply	-- variables
   in
@@ -101,13 +101,13 @@ toHTfn cs cvs dat =
        nest 4 (vcat (map (<+> text "= v") pats)) $$
        nest 4 (vcat (map (simplest typ (zip cvs cs)) fvs))
 
-namesupply   = [text [x,y] | x <- ['a' .. 'z'], 
+namesupply   = [text [x,y] | x <- ['a' .. 'z'],
                              y <- ['a' .. 'z'] ++ ['A' .. 'Z']]
 
 mknss []     _  = []
 mknss (c:cs) ns =
   let (thisns,rest) = splitAt (length (types c)) ns
-  in thisns: mknss cs rest 
+  in thisns: mknss cs rest
 
 mkpat ns c =
   if null ns then []
@@ -285,7 +285,7 @@ parseFn single ns cn =
   let cons = constructor cn
       arity = length (types cn)
       var v = text ";" <+> v <+> text "<- parseContents"
-      intro = if single then empty 
+      intro = if single then empty
               else text "|" <+> text (show cons)
                    <+> text "`isPrefixOf` t -> interior e $"
   in
@@ -352,7 +352,7 @@ textParseFn ns cn =
   in
   fsep ( text "(" <+> text (show cons)
        : text ","
-         <+> nest 2 
+         <+> nest 2
              (case arity of
                 0 -> text "return" <+> text cons
                 1 | null fields ->

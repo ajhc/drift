@@ -1,3 +1,7 @@
+DrIFT-2.2.2:
+  * redid build model, collect deriving rules automatically.
+
+
 DrIFT-2.2.1:
 
  Mon Aug 14 19:22:26 PDT 2006  John Meacham <john@repetae.net>
