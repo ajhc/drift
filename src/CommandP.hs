@@ -31,6 +31,14 @@ loc = do symbol "derive"
 cap = token (do x <- upper
                 xs <- many alphanum
                 return (x:xs))
+
+icap = token $ do
+    x <- upper
+    xs <- many alphanum
+    let f '.' = '/'
+        f c = c
+    return (x:map f xs)
+
 tag = token (many alphanum)
 
 annotation x = do symbol "{-!"
@@ -49,9 +57,10 @@ header = do symbol "module"
 
 imports = do symbol "import"
 	     opt (symbol "qualified")
-	     i <- cap
+	     i <- icap
 	     opt (symbol "as" >> cap)
 	     opt (symbol "hiding")
 	     opt (do skipNest (symbol "(") (symbol ")")
                      return [])
              return i
+

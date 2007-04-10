@@ -7,7 +7,7 @@ RULES=  Rules/Arbitrary.hs Rules/Binary.hs Rules/BitsBinary.hs Rules/FunctorM.hs
 
 bin_PROGRAMS = DrIFT
 DrIFT_SOURCES = ${RULES} ChaseImports.hs CommandP.hs DataP.lhs DrIFT.hs GetOpt.hs \
-   Literate.lhs ParseLib2.hs PreludData.hs Pretty.lhs RuleUtils.hs Version.hs GenUtil.hs
+   Unlit.hs ParseLib2.hs PreludData.hs Pretty.lhs RuleUtils.hs Version.hs GenUtil.hs
 
 # DrIFT_static_SOURCES = $(DrIFT_SOURCES)
 # DrIFT_static_LINK = $(DrIFT_LINK) -static -optl-static -ldl

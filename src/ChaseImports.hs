@@ -9,7 +9,16 @@
   which causes an error -}
 
 --GHC version
-module ChaseImports where
+module ChaseImports(
+    fromLit,
+    ToDo(),
+    isData,
+    resolve,
+    codeSeperator,
+    chaseImports,
+    parser,
+    userCode
+    ) where
 
 import RuleUtils (Tag)
 import DataP
@@ -17,25 +26,11 @@ import CommandP
 import ParseLib2
 import System
 import List
-import qualified Literate
+import qualified Unlit
 import Monad
 import GenUtil
 
-
--- #if defined(__HASKELL98__)
--- #define FMAP fmap
--- import IO (try)
--- #else
--- #define FMAP map
--- #if defined(__HUGS__)
--- import IO (try)
--- #elif defined(__GLASGOW_HASKELL__)
--- import IOBase (tryIO)
--- try = tryIO
--- #elif defined(__NHC__) || defined(__HBC__)
 try x = catch (x >>= return . Right) (return . Left)
--- #endif
--- #endif
 
 --- Split up input ---------------------------------------------------------
 splitString :: String -> String -> (String,String)
@@ -107,17 +102,17 @@ findModule :: [String] -> String -> IO String
 findModule paths modname = let
 	action p = try $ do
 			    h <- readFile p
- 	                    return (h,p)
+ 	                    return (h,p,".lhs" `isSuffixOf` p)
 	fnames = combine paths modname
 	isLeft (Left _ ) = True
 	isLeft _ = False
      in do
 	hh <- mapM action fnames
-	let (h,p) = case dropWhile (isLeft) hh of
+	let (h,p,l) = case dropWhile (isLeft) hh of
 	           ((Right h):_) -> h
 		   _ -> error ("can't find module " ++ modname)
 	putStrLn $ "-- " ++ p
-       	return $ fromLit (isLiterate h) h
+       	return $ fromLit l h
 
 -- generate filepaths by combining module names with different suffixes.
 -- Note : Dedicated Hugs-only users may wish to remove ".hi" from the list of
@@ -126,7 +121,7 @@ combine :: [String] -> String -> [FilePath]
 combine paths modname = [p++'/':f| f <- toFile modname, p <- ("." :paths)]
 	where
 	     toFile :: String -> [String]
-	     toFile l = [l++".hs",l++".lhs",l++".hi"]
+	     toFile l = [l++".hs",l++".lhs"]
 
 -- pluck out the bits of interest
 scanModule :: ToDo -> String -> (ToDo,ToDo)
@@ -148,16 +143,12 @@ resolve parsed ((tags,TypeName t):tt) (local,imports) =
 
 --handle literate scripts ---------------------------------------------------
 -- NB we don't do the latex-style literate scripts currently.
-fromLit True txt = case Literate.process txt of
-			  ([],s) -> s
-			  (e,_) -> error e
+fromLit True  txt = Unlit.unlit "" txt
 fromLit False txt = txt
 
-toLit True = unlines . map (\l -> '>':l)  . lines
-toLit False = id
 
-isLiterate :: String -> Bool
-isLiterate = any ((==">"). take 1) . lines
+--isLiterate :: String -> Bool
+--isLiterate = any ((==">"). take 1) . lines
 
 -- utils -- this should be the sort of thing automatically generated !!
 isData D{} = True
