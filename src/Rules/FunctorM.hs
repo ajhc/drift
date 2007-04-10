@@ -1,5 +1,5 @@
 -- stub module to add your own rules.
-module RuleFunctorM (rules) where
+module Rules.FunctorM (rules) where
 
 import List 
 import RuleUtils 

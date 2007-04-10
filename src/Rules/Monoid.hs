@@ -1,10 +1,11 @@
-module UserRuleArbitrary (rules) where
+-- stub module to add your own rules.
+module Rules.Monoid (rules) where
 
 import List 
 import RuleUtils 
 
 rules = [
-    ("Arbitrary", userRuleArbitrary, "Debugging", "Derive reasonable Arbitrary for QuickCheck", Nothing)
+    ("Monoid", userRuleMonoid, "Generics", "derive reasonable Data.Monoid implementation", Nothing)
     ]
 
 {- datatype that rules manipulate :-
@@ -37,6 +38,12 @@ type Rule = (Tag, Data->Doc)
 
 
 -- useful helper things
+
+mkpattern :: Constructor -> [Doc] -> Doc
+mkpattern c ns =
+  if null ns then text c
+  else parens (hsep (text c :  ns))
+
 instanceheader cls dat =
   let fv     = vars dat
       tycon  = name dat
@@ -53,18 +60,19 @@ instanceheader cls dat =
 
 
 
--- begin here for Arbitrary derivation
+-- begin here for Binary derivation
 
 
-userRuleArbitrary dat@D{name = name, vars = vars, body = body } = ins where
-    ins = instanceheader "Arbitrary" dat $$ block [arb, coarb]
-    arb :: Doc
-    arb = text "arbitrary" <+> equals <+> text "do" <+>
-            vcat [text ("x <- choose (1,"++show (length body)++")"),
-                  text "case x of" $$ vcat alts]
-    alts= zipWith alt [1..] body
-    alt k (Body cons _ tys) = let vs = zipWith (\k _ -> "v"++show k) [1..] tys
-                              in text ("  "++show k++" -> do ") 
-                             <+> vcat ((map (\v -> text (v++" <- arbitrary")) vs)
-                                       ++ [text ("return ("++cons++" "++concat (intersperse " " vs)++")")])
-    coarb = text "coarbitrary = error \"coarbitrary not yet supported\""
+userRuleMonoid dat@D{name = name, vars = vars, body=[body] } = ins where
+    ins = instanceheader "Monoid" dat $$ 
+        block [me, ma]
+    me, ma :: Doc
+    me = text "mempty" <+> equals <+> text (constructor body) <+> hsep (replicate lt (text "mempty"))     
+    ma = text "mappend" <+> mkpattern c (varNames ty) <+> mkpattern c (varNames' ty) <+> equals <+> text c <+> hcat (zipWith f (varNames ty) (varNames' ty))
+    f a b = parens $ text "mappend"  <+> a <+> b
+    c = constructor body
+    ty = types body
+    lt = length (types body)
+userRuleMonoid D{name = name } = text "--" <+> text name <> text ": Cannot derive Monoid from type"
+
+

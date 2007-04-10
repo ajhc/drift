@@ -1,11 +1,11 @@
 -- expanded from stub module to add new rules.
-module UserRuleXml (userRulesXml) where
+module Rules.Xml(rules) where
 
 import List (nub,sortBy)
 import RuleUtils -- useful to have a look at this too
 
-userRulesXml :: [RuleDef]
-userRulesXml =
+rules :: [RuleDef]
+rules =
  [ ("Haskell2Xml", userRuleXmlOld, "Representation"
                             , "encode terms as XML (HaXml<=1.13)", Nothing)
  , ("XmlContent", userRuleXmlNew, "Representation"

@@ -1,13 +1,13 @@
 
-module UserRulesGeneric(userRulesGeneric) where
+module Rules.Generic(rules) where
 
 -- import StandardRules
 import RuleUtils
 import List(intersperse)
 
 
-userRulesGeneric :: [RuleDef]
-userRulesGeneric =  [
+rules :: [RuleDef]
+rules =  [
     ("ATermConvertible", atermfn, "Representation", "encode terms in the ATerm format", Nothing),
     ("Typeable", typeablefn, "General", "derive Typeable for Dynamic", Nothing),
     ("Term", dyntermfn, "Generics","Strafunski representation via Dynamic", Nothing),

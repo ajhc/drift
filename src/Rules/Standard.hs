@@ -1,4 +1,4 @@
-module StandardRules (standardRules) where
+module Rules.Standard(rules) where
 
 import RuleUtils
 import List 
@@ -7,8 +7,8 @@ import GenUtil
 
 --- Add Rules Below Here ----------------------------------------------------
 
-standardRules :: [RuleDef]
-standardRules = [("test",dattest, "Utility", "output raw data for testing", Nothing),
+rules :: [RuleDef]
+rules = [("test",dattest, "Utility", "output raw data for testing", Nothing),
 		  ("update",updatefn, "Utility","for label 'foo' provides 'foo_u' to update it and foo_s to set it", Nothing ),
 		  ("is",isfn, "Utility", "provides isFoo for each constructor", Nothing),
 		  ("get",getfn, "Utility", "for label 'foo' provide foo_g to get it", Nothing),

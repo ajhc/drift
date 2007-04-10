@@ -1,23 +1,27 @@
 
 AUTOMAKE_OPTIONS = no-dependencies foreign
 
+RULES=  Rules/Arbitrary.hs Rules/Binary.hs Rules/BitsBinary.hs Rules/FunctorM.hs \
+	Rules/Generic.hs Rules/GhcBinary.hs Rules/Monoid.hs Rules/Standard.hs \
+	Rules/Utility.hs Rules/Xml.hs
+
 bin_PROGRAMS = DrIFT
-DrIFT_SOURCES = ChaseImports.hs CommandP.hs DataP.lhs DrIFT.hs GetOpt.hs \
-   Literate.lhs ParseLib2.hs PreludData.hs Pretty.lhs RuleUtils.hs \
-   StandardRules.hs UserRuleBinary.hs UserRulesGeneric.hs \
-   UserRules.hs UserRuleXml.hs Version.hs GenUtil.hs UserRuleGhcBinary.hs \
-   RuleUtility.hs RuleFunctorM.hs RuleMonoid.hs UserRuleArbitrary.hs \
-   UserRuleBitsBinary.hs
+DrIFT_SOURCES = ${RULES} ChaseImports.hs CommandP.hs DataP.lhs DrIFT.hs GetOpt.hs \
+   Literate.lhs ParseLib2.hs PreludData.hs Pretty.lhs RuleUtils.hs Version.hs GenUtil.hs
 
 # DrIFT_static_SOURCES = $(DrIFT_SOURCES)
 # DrIFT_static_LINK = $(DrIFT_LINK) -static -optl-static -ldl
 
-EXTRA_DIST = depend.make
+EXTRA_DIST = depend.make  Rules.hs collect_rules.sh
 # EXTRA_PROGRAMS = DrIFT_static
+
+BUILT_SOURCES=Rules.hs
 
 
 DrIFT_LINK = $(HC) $(HCFLAGS) -o $@
 
+Rules.hs: collect_rules.sh
+	sh ./collect_rules.sh > $@
 
 SUFFIXES = .hs .lhs .o .hi
 

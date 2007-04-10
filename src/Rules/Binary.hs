@@ -1,9 +1,9 @@
-module UserRuleBinary (userRulesBinary) where
+module Rules.Binary(rules) where
 
 import List (nub,intersperse)
 import RuleUtils
 
-userRulesBinary = [
+rules = [
     ("Binary", userRuleBinary, "Binary", "Data.Binary binary encoding of terms", Nothing)
     ]
 
