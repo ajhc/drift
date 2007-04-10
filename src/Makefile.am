@@ -1,5 +1,5 @@
 
-AUTOMAKE_OPTIONS = no-dependencies foreign
+AUTOMAKE_OPTIONS = no-dependencies foreign subdir-objects
 
 RULES=  Rules/Arbitrary.hs Rules/Binary.hs Rules/BitsBinary.hs Rules/FunctorM.hs \
 	Rules/Generic.hs Rules/GhcBinary.hs Rules/Monoid.hs Rules/Standard.hs \
@@ -12,7 +12,7 @@ DrIFT_SOURCES = ${RULES} ChaseImports.hs CommandP.hs DataP.lhs DrIFT.hs GetOpt.h
 # DrIFT_static_SOURCES = $(DrIFT_SOURCES)
 # DrIFT_static_LINK = $(DrIFT_LINK) -static -optl-static -ldl
 
-EXTRA_DIST = depend.make  Rules.hs collect_rules.sh
+EXTRA_DIST = Rules.hs collect_rules.sh
 # EXTRA_PROGRAMS = DrIFT_static
 
 BUILT_SOURCES=Rules.hs
@@ -28,13 +28,15 @@ SUFFIXES = .hs .lhs .o .hi
 # COMPILE = $(HC) $(HCFLAGS)
 
 # all: DrIFT
+DrIFT: $(DrIFT_SOURCES) $(nodist_DrIFT_SOURCES)
+	$(HC) $(HCFLAGS) -i. -i@srcdir@ -hidir . -odir . -o $@ --make @srcdir@/DrIFT.hs
 
-.hs.o:
-	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $<
-.lhs.o:
-	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $<
-%.hi: %.o
-	@:
+#.hs.o:
+#	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $<
+#.lhs.o:
+#	$(HC) -O -i. -i@srcdir@ $(HCFLAGS) -hidir . -o $@ -c $<
+#%.hi: %.o
+#	@:
 
 clean:
 	rm -f -- *.hi *.o *_hsc.c *_hsc.h
@@ -42,8 +44,12 @@ clean:
 distclean-local:
 	rm -f -- *.hi *.o *_hsc.c *_hsc.h config.log config.status
 
-depend:
-	ghc -M -optdep-f -optdepdepend.make DrIFT.hs
+#depend:
+#	ghc -M -optdep-f -optdepdepend.make DrIFT.hs
+
+#depend.make:
+#	ghc -M -optdep-f -optdepdepend.make DrIFT.hs
+
 
 BINDISTNAME=$(PACKAGE)-$(VERSION)-`uname -s`-`uname -m`
 
@@ -59,4 +65,8 @@ bin-dist: $(PACKAGE)
 	gzip -f -- $(BINDISTNAME).tar
 	$(RM) -rf -- $(BINDISTNAME)
 
-include depend.make
+CLEANFILES = Rules/*.o Rules/*.hi
+
+#-include depend.make
+
+#.PHONY: depend

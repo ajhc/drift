@@ -35,8 +35,7 @@ location of a Haskell compiler as follows:
 If you have pulled the source from the darcs repository, you must first build
 the autotools scripts by running
 
- automake -a
- autoreconf
+ autoreconf -i
 
 
 ------------------------------------------------------------------------------
