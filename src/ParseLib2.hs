@@ -180,8 +180,11 @@ string            :: String -> Parser String
 string ""          = return ""
 string (x:xs)      = do {char x; string xs; return (x:xs)}
 
+
+
+-- parse a Haskell 98 identifier, when the input is a valid Haskell 98 identifier (it's more liberal than H98)
 ident             :: Parser String
-ident              = do {x <- lower; xs <- many alphanum; return (x:xs)}
+ident              = do {x <- lower +++ char '_' ; xs <- many alphanum; return (x:xs)}
 
 nat               :: Parser Int
 nat                = do {x <- digit; return (digitToInt x)} `chainl1` return op
