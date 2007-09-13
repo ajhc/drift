@@ -19,7 +19,8 @@ Contents of this package:
 
 ------------------------------------------------------------------------------
 
-To configure and install DrIFT, type the following:
+
+To configure and install DrIFT from the source tarball
 
   ./configure --prefix=<dir>
   make install
@@ -40,15 +41,9 @@ the autotools scripts by running
 
 ------------------------------------------------------------------------------
 
-To use DrIFT, heed the following instructions (which were taken from the
-DrIFT v1.0 distribution).
 
-  Installation
-  ------------
-  copy the 'DrIFT' executable to somewhere on your path
-
-  set DERIVEPATH to the list of directories you wish to search for
-  modules / interfaces.
+You may optionally sset DERIVEPATH to the list of directories you wish to search for
+modules / interfaces.
 
   DERIVEPATH is quite fussy about the format the list should take :-
     * each path should be separated by ':'
@@ -58,8 +53,7 @@ DrIFT v1.0 distribution).
   good - /users/grad/nww/share/hugs/lib:/users/grad/nww/share/hugs/lib/hugs
   bad  - /users/grad/nww/share/hugs/lib/:/users/grad/nww/share/hugs/lib/hugs/
 
-  Running DrIFT
-  --------------
-  DrIFT <filename>
 
-------------------------------------------------------------------------------
+to run DrIFT, simply pass the haskell file name as an argument. you may run
+DrIFT --help to get a summary of the various command line options
+

@@ -13,7 +13,7 @@
 
 @dircategory Haskell Tools
 @direntry
-* DrIFT: (drift). A type sensitive preprocessor for Haskell 98.  
+* DrIFT: (drift). A type sensitive preprocessor for Haskell 98.
 @end direntry
 
 @end ifinfo
@@ -23,7 +23,7 @@
 @title DrIFT User Guide
 @subtitle version @value{VERSION}
 @subtitle @value{UPDATED}
-@author Noel Winstanley  
+@author Noel Winstanley
 @author @email{nww@@dcs.gla.ac.uk}
 @author John Meacham
 @author @email{john@@foo.net}
@@ -39,19 +39,19 @@ automatically generate code for new defined types.
 @end ifinfo
 
 @menu
-* Introduction::                
-* User Guide::                  
-* Standard Rules::              
-* User-Defined Rules::          
-* Installation::                
-* Bugs::                        
+* Introduction::
+* User Guide::
+* Standard Rules::
+* User-Defined Rules::
+* Installation::
+* Bugs::
 @end menu
 
 @c 5. Body
 @node Introduction, User Guide, Top, Top
 @chapter Introduction
-This is a guide to using DrIFT, a type sensitive 
-preprocessor for Haskell 98.  
+This is a guide to using DrIFT, a type sensitive
+preprocessor for Haskell 98.
 
 DrIFT is a tool which parses a Haskell module for structures (data & newtype
 declarations) and commands.  These commands cause rules to be fired on the
@@ -63,10 +63,10 @@ DrIFT is written in pure Haskell 98, however code it generates is free to make
 use of extensions when appropriate. DrIFT is currently tested against hugs and ghc.
 
 @menu
-* What does DrIFT do?::        
-* Features::                    
-* Motivation::                  
-* An Example::                  
+* What does DrIFT do?::
+* Features::
+* Motivation::
+* An Example::
 @end menu
 
 @node What does DrIFT do?, Features, Introduction, Introduction
@@ -113,32 +113,32 @@ running @code{DrIFT -l}.
 
 @verbatim
 
-Binary:              
+Binary:
    Binary            efficient binary encoding of terms
    GhcBinary         byte sized binary encoding of terms
-Debugging:           
+Debugging:
    Observable        HOOD observable
-General:             
+General:
    NFData            provides 'rnf' to reduce to normal form (deepSeq)
    Typeable          derive Typeable for Dynamic
-Generics:            
+Generics:
    FunctorM          derive reasonable fmapM implementation
    HFoldable         Strafunski hfoldr
    Monoid            derive reasonable Data.Monoid implementation
    RMapM             derive reasonable rmapM implementation
    Term              Strafunski representation via Dynamic
-Prelude:             
-   Bounded           
-   Enum              
-   Eq                
-   Ord               
-   Read              
-   Show              
-Representation:      
+Prelude:
+   Bounded
+   Enum
+   Eq
+   Ord
+   Read
+   Show
+Representation:
    ATermConvertible  encode terms in the ATerm format
    Haskell2Xml       encode terms as XML (HaXml<=1.13)
    XmlContent        encode terms as XML (HaXml>=1.14)
-Utility:             
+Utility:
    Parse             parse values back from standard 'Show'
    Query             provide a QueryFoo class with 'is', 'has',
                        'from', and 'get' routines
@@ -187,7 +187,7 @@ types, especially records was caused by finding oneself writing the same sort
 of code over and over again.  These functions couldn't be captured in a class,
 but have a similar form for each type they are defined on.  A thread on the
 Haskell mailing list made a related point: untagging and manipulating newtypes
-was more cumbersome than it should be.  
+was more cumbersome than it should be.
 
 @node An Example,  , Motivation, Introduction
 @section An Example
@@ -199,27 +199,27 @@ the new code starts.  The machine generated code is quite long, and
 would really have been a drudge to type in by hand.
 
 @menu
-* Source Code::                 
-* After processing with DrIFT::  
+* Source Code::
+* After processing with DrIFT::
 @end menu
 
 @node Source Code, After processing with DrIFT, An Example, An Example
 @subsection Source Code
 @example
--- example script for DrIFT 
+-- example script for DrIFT
 
 module Example where
 import Foo
 @{-!for Foo derive :  Read,NFData !-@} -- apply rules to imported type
 
 @{-! global : is !-@} -- global to this module
-@{-!for Data derive : update,Show,Read!-@} -- stand alone comand syntax 
+@{-!for Data derive : update,Show,Read!-@} -- stand alone comand syntax
 
 @{-!for Maybe derive : NFData !-@} -- apply rules to prelude type
 
-data Data = D @{name :: Name,		
-			constraints :: [(Class,Var)], 
-			vars :: [Var],	
+data Data = D @{name :: Name,
+			constraints :: [(Class,Var)],
+			vars :: [Var],
 			body :: [(Constructor,[(Name,Type)])],
 			derive :: [Class],
 			statement :: Statement@}
@@ -236,18 +236,18 @@ import Foo
 @{-!for Foo derive : Read,NFData !-@} -- apply rules to imported type
 
 @{-! global : is !-@} -- global to this module
-@{-!for Data derive : update,Show,Read!-@} -- stand alone comand syntax 
+@{-!for Data derive : update,Show,Read!-@} -- stand alone comand syntax
 
 @{-!for Maybe derive : NFData !-@} -- apply rules to prelude type
 
-data Data = D @{name :: Name,           
-                        constraints :: [(Class,Var)], 
-                        vars :: [Var],  
+data Data = D @{name :: Name,
+                        constraints :: [(Class,Var)],
+                        vars :: [Var],
                         body :: [(Constructor,[(Name,Type)])],
                         derive :: [Class],
                         statement :: Statement@}
 
-data Statement = DataStmt | NewTypeStmt 
+data Statement = DataStmt | NewTypeStmt
         deriving Eq @{-!derive : Ord,Show,Read !-@}
 
 @{-* Generated by DrIFT-v1.0 : Look, but Don't Touch. *-@}
@@ -266,12 +266,12 @@ instance Show Statement where
 
 instance Read Statement where
     readsPrec d input =
-              (\ inp -> [((DataStmt) , rest) 
+              (\ inp -> [((DataStmt) , rest)
                           | ("DataStmt" , rest) <- lex inp])
               input
               ++
               (\ inp ->
-               [((NewTypeStmt) , rest) 
+               [((NewTypeStmt) , rest)
                   | ("NewTypeStmt" , rest) <- lex inp])
               input
 
@@ -337,13 +337,13 @@ instance Read Data where
 
 instance Read Foo where
     readsPrec d input =
-              (\ inp -> [((Foo) , rest) 
+              (\ inp -> [((Foo) , rest)
                           | ("Foo" , rest) <- lex inp]) input
               ++
-              (\ inp -> [((Bar) , rest) 
+              (\ inp -> [((Bar) , rest)
                           | ("Bar" , rest) <- lex inp]) input
               ++
-              (\ inp -> [((Bub) , rest) 
+              (\ inp -> [((Bub) , rest)
                           | ("Bub" , rest) <- lex inp]) input
 
 instance NFData Foo where
@@ -356,7 +356,7 @@ instance NFData Foo where
 @node User Guide, Standard Rules, Introduction, Top
 @chapter User Guide
 This chapter assumes that DrIFT has already been installed and the
-environment variables set up. The installation is handled 
+environment variables set up. The installation is handled
 in @ref{Installation}.
 
 Briefly, the way DrIFT works is
@@ -379,9 +379,9 @@ Rules can be applied to any types defined using a @code{data} or
 try to use rules on type synonyms.}
 
 @menu
-* Command Line::                
-* Command Syntax::              
-* Emacs DrIFT mode::           
+* Command Line::
+* Command Syntax::
+* Emacs DrIFT mode::
 @end menu
 
 @node Command Line, Command Syntax, User Guide, User Guide
@@ -390,7 +390,7 @@ DrIFT processes standard Haskell scripts (suffix @file{.hs}) and
 literate scripts (suffix @file{.lhs}).  Currently, only literate code
 using @code{>} is accepted: DrIFT doesn't understand the @TeX{} style
 of literate programming using @code{\begin@{code@}}.
- 
+
 If you've compiled up an executable from the source code (or are using
 Runhugs) to run DrIFT over a file type :-
 
@@ -410,7 +410,7 @@ given to GHC or HBC).  There are three forms of command.
 @itemize @bullet
 
 @item
-@strong{Stand--Alone Command} 
+@strong{Stand--Alone Command}
 (syntax : @code{@{-! for @var{type} derive :
 @var{rule1},@var{rule2},@dots{} !-@}})
 This is the basic form of DrIFT command.  It asks DrIFT to apply the
@@ -423,18 +423,18 @@ searched.  This is the only command which allows code to be generated
 for a type defined in another module.
 
 @item
-@strong{Abbreviated Command} 
+@strong{Abbreviated Command}
 (syntax : @code{@{-! derive :@var{rule1},@var{rule2},@dots{} !-@}})
 This command is appended to the end of a @code{data} or @code{newtype}
 definition, after the deriving clause, if present.  It applies the listed
 rules to the type it is attached to.
 
 @item
-@strong{Global Command} 
-(syntax : @code{@{-! global :@var{rule1},@var{rule2},@dots{} !-@}} 
+@strong{Global Command}
+(syntax : @code{@{-! global :@var{rule1},@var{rule2},@dots{} !-@}}
 This command applies the listed rules
 to all types defined within the module.  Note that this command doesn't
-cause code to be generated for types imported from other modules.  
+cause code to be generated for types imported from other modules.
 @end itemize
 
 For an example of these commands in use, @xref{An Example}.
@@ -446,12 +446,12 @@ For an example of these commands in use, @xref{An Example}.
 The stand-alone and global commands should be entered on a line by
 themselves, starting in the first column, (as with other top-level
 declarations, such as @code{infix}, @code{import},@code{newtype}).  It
-doesn't matter what position they occur within the module.  
+doesn't matter what position they occur within the module.
 
 @item
 In a
 literate file, all commands should be entered on a `code' line (one
-starting with @code{>}).  
+starting with @code{>}).
 
 @item
 Commands may be commented out by using
@@ -466,8 +466,8 @@ the processed module is compiled/interpreted.  @strong{Don't do it!}
 
 @node Emacs DrIFT mode,  , Command Syntax, User Guide
 @section Emacs DrIFT mode
-For Emacs fans, Hans W Loidl 
-@email{hwloidl@@dcs.gla.ac.uk} 
+For Emacs fans, Hans W Loidl
+@email{hwloidl@@dcs.gla.ac.uk}
 has written a script which allows DrIFT to be run within a buffer.
 
 The commands available are
@@ -479,7 +479,7 @@ buffer, and then updates the buffer.
 
 @item
 @code{M-x hwl-derive-insert-standalone}, @code{C-c d s} inserts a
-template for a standalone command into the current buffer at the 
+template for a standalone command into the current buffer at the
 cursor position.
 
 @item
@@ -503,12 +503,12 @@ as used in commands. The naming convention for rules is names
 starting with a capital generate an instance for the class of the same
 name.  Sets of functions are generated by a name beginning with a lower
 case letter.
- 
+
 @section Prelude Classes
-The classes @strong{Eq}, @strong{Ord}, @strong{Enum}, @strong{Show}, 
+The classes @strong{Eq}, @strong{Ord}, @strong{Enum}, @strong{Show},
 @strong{Read} & @strong{Bounded} are described in the
 Haskell report as being derivable; DrIFT provides rules for all
-these.  
+these.
 @section Other Classes
 Originally, @strong{NFData} (for Normal Form evaluation strategies)
 was the only other class to have a rule.  But now, there are rules for
@@ -524,9 +524,9 @@ from HaXml, @strong{Binary} from nhc98, @strong{Term} from Strafunski,
 @item
 @strong{un} attempts to make newtypes a little nicer to use by providing
 an untagging function.  This rule can only be used on types defined
-using @code{newtype}. 
+using @code{newtype}.
 
-@quotation 
+@quotation
 For a type @code{newtype Foo a = F a},
 
 @strong{un} produces the function @code{unFoo :: Foo a -> a}.
@@ -535,7 +535,7 @@ For a type @code{newtype Foo a = F a},
 @item
 @strong{is} produces predicates that indicate the presence of a
 constructor.  This is only useful for multi-constructor datatypes
-(obviously).  
+(obviously).
 
 @quotation
 For a type @code{data Foo = Bar | Bub}, @strong{is} generates
@@ -547,11 +547,11 @@ For a type @code{data Foo = Bar | Bub}, @strong{is} generates
 @strong{has} produces predicates that indicate the presence of a label.
 This can only be used with types where at least one of the constructors
 is a labelled record.  Note that labels can be shared between
-constructors of the same type. 
+constructors of the same type.
 
 @quotation
-For a type @code{data Foo a = F@{bar :: a,bub :: Int@}}  
-@strong{has} generates  
+For a type @code{data Foo a = F@{bar :: a,bub :: Int@}}
+@strong{has} generates
 
 @code{hasbar :: Foo a-> Bool} and @code{hasbub :: Foo a -> Bool}.
 @end quotation
@@ -559,18 +559,18 @@ For a type @code{data Foo a = F@{bar :: a,bub :: Int@}}
 @item
 @strong{update} produces functions that update fields within a
 record type.  This rule can only be used with a type where at least on
-of the constructors is a labelled record.  
+of the constructors is a labelled record.
 
 @quotation
 For a type @code{data Foo a = F@{bar :: a, bub ::Int@}} @strong{update}
 generates
 
-@code{bar_u :: (a -> a) -> Foo a -> Foo a} and 
+@code{bar_u :: (a -> a) -> Foo a -> Foo a} and
 
 @code{bub_u :: (Int -> Int) ->
 Foo a -> Foo a} which apply a function to a field of a record, and then return
 the updated record. If the value does not have the given field then the value
-is returned unchanged. 
+is returned unchanged.
 
 @code{bar_s :: a -> Foo a ->
 Foo a} and @code{bub_s ::Int -> Foo a -> Foo a} are also
@@ -588,7 +588,7 @@ what information is stored about a particular type.
 @node User-Defined Rules, Installation, Standard Rules, Top
 @chapter Rolling Your Own
 Programmers who only wish to use the pre-defined rules in DrIFT don't need to
-read or understand the following section.  However, 
+read or understand the following section.  However,
 as well as using the supplied rules, users are encouraged to add their
 own.  There is a stub module @file{UserRules.hs} in the source, to
 which rules can be added.
@@ -604,22 +604,22 @@ possible to have a default UserRules module, and specialised ones for
 particular projects.
 
 @menu
-* The Basic Idea::              
-* How is a Type Represented?::  
-* Pretty Printing  ::           
-* Utilities::                   
-* Adding a new rule::           
+* The Basic Idea::
+* How is a Type Represented?::
+* Pretty Printing  ::
+* Utilities::
+* Adding a new rule::
 @end menu
 
 @node The Basic Idea, How is a Type Represented?, User-Defined Rules, User-Defined Rules
 @section The Basic Idea
- 
+
 A rule is a tuple containing a string and a function. The string is the
 name of the rule, and is used in commands in an input file. The
 function maps between the abstract representation of a datatype and text
 to be output (A sort of un-parser, if you like). The best way to
 understand this is to have a look at the existing rules in
-@file{StandardRules.hs}.  This module is quite well documented. 
+@file{StandardRules.hs}.  This module is quite well documented.
 
 @node How is a Type Represented?, Pretty Printing  , The Basic Idea, User-Defined Rules
 @section How is a Type Represented?
@@ -629,18 +629,18 @@ definition.
 >data Statement = DataStmt | NewTypeStmt deriving (Eq,Show)
 
 >data Data = D @{        name :: Name,           -- type name
->                       constraints :: [(Class,Var)], 
+>                       constraints :: [(Class,Var)],
 >                       vars :: [Var],          -- Parameters
 >                       body :: [Body],
 >                       derives :: [Class],     -- derived classes
 >                       statement :: Statement@}
->          | Directive 
->          | TypeName Name deriving (Eq,Show) 
+>          | Directive
+>          | TypeName Name deriving (Eq,Show)
 
 >type Name = String
 >type Var = String
 >type Class = String
-@end example 
+@end example
 
 A @code{Data} type represents one parsed @code{data} or @code{newtype}
 statement.  These are held in a @code{D} constructor record (the
@@ -649,7 +649,7 @@ DrIFT).  We'll now examine each of the fields in turn.
 
 @itemize @bullet
 
-@item 
+@item
 @code{name} holds the name of the new datatype as a string.
 
 @item
@@ -678,7 +678,7 @@ using the @code{deriving} clause.
 @example
 >data Body = Body @{ constructor :: Constructor,
 >                   labels :: [Name],
->                   types :: [Type]@} deriving (Eq,Show) 
+>                   types :: [Type]@} deriving (Eq,Show)
 
 >type Constructor = String
 @end example
@@ -704,7 +704,7 @@ information, which I found quite surprising.  If you do find you need to
 use it, one example is the Haskell2Xml rule.
 
 @node Pretty Printing  , Utilities, How is a Type Represented?, User-Defined Rules
-@section Pretty Printing 
+@section Pretty Printing
 
 Instead of producing a string as output, rules produce a value of type
 @code{Doc}.  This type is defined in the Pretty Printing Library implemented
@@ -729,7 +729,7 @@ should be self explanatory.
 @section Adding a new rule
 A rule has type @code{type Rule = (String,Data -> Doc)}.  Once you have
 written your mapping function and chosen an appropriate name for the
-rule, add this tuple to the list @code{userRules :: [Rule]} 
+rule, add this tuple to the list @code{userRules :: [Rule]}
 in module @file{UserRules.hs}. Recompile if necessary.  DrIFT will then call this rule when
 its name occurs in a command in an input file.
 
@@ -742,11 +742,11 @@ platform you want to install for, read the corresponding section below,
 then see @ref{Environment Variables}
 
 @menu
-* GHC::                         
-* Hugs::                        
-* Runhugs::                     
-* Environment Variables::       
-* Installing the Emacs DrIFT Mode::  
+* GHC::
+* Hugs::
+* Runhugs::
+* Environment Variables::
+* Installing the Emacs DrIFT Mode::
 @end menu
 
 @node GHC, Hugs, Installation, Installation
@@ -812,7 +812,7 @@ Place @file{derive.el} into a directory on your @code{load-path}, byte-compile i
 
 @item
 DrIFT doesn't check for commands applying the same rule to a
-type.  
+type.
 @item
 No support for @TeX{}-style literate code.
 
