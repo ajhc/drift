@@ -55,14 +55,6 @@ parser = sanitycheck . papply p (0,0) . \s -> ((0,0),s)
        sanitycheck [(x,_)] = x
        sanitycheck ((x,_):_) = error "***Error: ambiguous DriFT directives?"
 
-importParser :: String -> [Data]
-importParser text = fst . head . papply p (0,-1) $ ((0,0),ip)
-	where
-	ip =  snd $ splitString "_declarations_" text
-	p = parse $ skipUntilParse  ';' info
-	info = do integer
-                  (datadecl+++newtypedecl)
-
 
 -------Go Hunting for files, recursively ----------------------------------
 
@@ -83,8 +75,6 @@ chaseImports' text dats =
 			     | otherwise = do
              mp <- ioM $ getEnv "DERIVEPATH"
              let paths = maybe [] breakPaths mp
-	     --paths <- fmap breakPaths (getEnv "DERIVEPATH")
-	     -- may want a few more envs here ...
 	     c <- findModule paths m
 	     let (found,rest) = scanModule dats c
 	     if (null rest) then return ([],done ++ found) -- finished
@@ -115,8 +105,6 @@ findModule paths modname = let
        	return $ fromLit l h
 
 -- generate filepaths by combining module names with different suffixes.
--- Note : Dedicated Hugs-only users may wish to remove ".hi" from the list of
--- file types to search.
 combine :: [String] -> String -> [FilePath]
 combine paths modname = [p++'/':f| f <- toFile modname, p <- ("." :paths)]
 	where
@@ -127,9 +115,7 @@ combine paths modname = [p++'/':f| f <- toFile modname, p <- ("." :paths)]
 scanModule :: ToDo -> String -> (ToDo,ToDo)
 scanModule dats txt = let
 	newDats = filter isData . parse $ txt
-	parse l = case head ( words l) of
-			"_interface_" -> importParser $ l
-			_ -> map snd . parser . fst . userCode $ l
+	parse l = map snd . parser . fst . userCode $ l
 	in (resolve newDats dats ([],[]))
 
 -- update what's still missing

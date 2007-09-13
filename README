@@ -43,15 +43,11 @@ the autotools scripts by running
 
 
 You may optionally sset DERIVEPATH to the list of directories you wish to search for
-modules / interfaces.
+modules.
 
-  DERIVEPATH is quite fussy about the format the list should take :-
-    * each path should be separated by ':'
-    * no space inserted anywhere
-    * no final '/' on the end of a path
+as an example:
 
-  good - /users/grad/nww/share/hugs/lib:/users/grad/nww/share/hugs/lib/hugs
-  bad  - /users/grad/nww/share/hugs/lib/:/users/grad/nww/share/hugs/lib/hugs/
+DERIVEPATH=/users/grad/nww/share/hugs/lib:/users/grad/nww/share/hugs/lib/hugs
 
 
 to run DrIFT, simply pass the haskell file name as an argument. you may run

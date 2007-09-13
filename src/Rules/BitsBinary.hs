@@ -5,7 +5,7 @@ import List (nub,intersperse)
 import RuleUtils -- useful to have a look at this too
 
 rules = [
-    ("BitsBinary", userRuleBinary, "Binary", "efficient binary encoding of terms", Nothing)
+    ("BitsBinary", userRuleBinary, "Binary", "bit based binary encoding of terms", Nothing)
     ]
 
 {- datatype that rules manipulate :-
