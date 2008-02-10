@@ -10,7 +10,7 @@ docs/drift.html: docs/drift.texi
 SUBDIRS	= src example
 
 EXTRA_DIST = configure.ac \
-             Changelog TODO README.old drift-ghc.in code \
+             Changelog README.old drift-ghc.in code \
              code/FunctorM.hs code/GhcBinary.hs code/README.txt \
 	     ac-macros/acincludepackage.m4 LICENSE docs/drift.html
 
