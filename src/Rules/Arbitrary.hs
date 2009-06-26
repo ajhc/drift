@@ -60,7 +60,7 @@ userRuleArbitrary dat@D{name = name, vars = vars, body = body } = ins where
     ins = instanceheader "Arbitrary" dat $$ block [arb, coarb]
     arb :: Doc
     arb = text "arbitrary" <+> equals <+> text "do" <+>
-            vcat [text ("x <- choose (1,"++show (length body)++")"),
+            vcat [text ("x <- choose ((1::Int),"++show (length body)++")"),
                   text "case x of" $$ vcat alts]
     alts= zipWith alt [1..] body
     alt k (Body cons _ tys) = let vs = zipWith (\k _ -> "v"++show k) [1..] tys

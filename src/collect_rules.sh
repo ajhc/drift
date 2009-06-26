@@ -8,7 +8,7 @@ echo "module Rules(rules) where"
 echo
 
 for a in Rules/*; do
-    b=$(echo $a | sed -ne 's/^Rules\/\(.*\)\.l\?hs$/\1/p')
+    b=$(echo $a | sed -ne 's/^Rules\/\(.*\)\.l\{0,1\}hs$/\1/p')
 
     echo "import qualified Rules.$b";
 
@@ -19,7 +19,7 @@ echo "rules = concat"
 
 
 for a in Rules/*; do
-    b=$(echo $a | sed -ne 's/^Rules\/\(.*\)\.l\?hs$/\1/p')
+    b=$(echo $a | sed -ne 's/^Rules\/\(.*\)\.l\{0,1\}hs$/\1/p')
     if test -n "$seen"; then
     echo "  ,Rules.$b.rules";
     else
