@@ -1,27 +1,25 @@
-
 AC_INIT([DrIFT],[2.2.3],john@repetae.net, [DrIFT])
 AC_CONFIG_SRCDIR(src/DrIFT.hs)
 AC_CONFIG_MACRO_DIR(ac-macros)
 AC_CONFIG_AUX_DIR(ac-macros)
 AM_INIT_AUTOMAKE([foreign no-dependencies subdir-objects])
 
-#AC_CANONICAL_HOST
-#AC_PROG_CC
+AC_CANONICAL_HOST
 
 dnl Let aclocal use macros in ./config directory
-ACLOCAL="${ACLOCAL} -I ./ac-macros"
+dnl ACLOCAL="${ACLOCAL} -I ./ac-macros"
 
-
-
-
-AC_PROGRAM_REQUIRE(hc,ghc,              [  --with-hc=<haskell compiler>    Specify location of ghc.])
+AC_PROGRAM_REQUIRE(hc,ghc,[  --with-hc=<haskell compiler>    Specify location of ghc.])
 AC_ARG_WITH(hcflags,
             [  --with-hcflags=HCFLAGS  specify flags for Haskell compiler],
 	    [HCFLAGS=$withval])
 
+GHC=$HC
+GHCFLAGS=
+GHC_CHECK_MODULE([System],[],[],[],[HCFLAGS="$HCFLAGS -hide-all-packages -package haskell98"])
+
 AC_PROG_INSTALL
 AC_PATH_PROGS(SH, sh)
-
 
 AC_SUBST(HC)
 AC_SUBST(HCFLAGS)
