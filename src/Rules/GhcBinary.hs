@@ -1,7 +1,7 @@
 -- stub module to add your own rules.
 module Rules.GhcBinary (rules) where
 
-import List (nub,intersperse)
+import Data.List (nub,intersperse)
 import RuleUtils -- useful to have a look at this too
 
 rules = [

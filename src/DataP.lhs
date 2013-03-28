@@ -10,10 +10,8 @@ needs to be fixed.
 >where
 
 >import ParseLib2
->import Char
->import List
->import Monad
-
+>import Data.Char
+>import Data.List
 
 >data Statement = DataStmt | NewTypeStmt deriving (Eq,Show)
 >data Data = D {	name :: Name,		-- type name

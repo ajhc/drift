@@ -39,7 +39,7 @@ module GenUtil(
     -- ** Simple deconstruction
     fromLeft,fromRight,fsts,snds,splitEither,rights,lefts,
     -- ** System routines
-    exitSuccess, System.exitFailure, epoch, lookupEnv,endOfTime,
+    exitSuccess, exitFailure, epoch, lookupEnv,endOfTime,
     -- ** Random routines
     repMaybe,
     liftT2, liftT3, liftT4,
@@ -91,14 +91,17 @@ module GenUtil(
     UniqueProducer(..)
     ) where
 
-import Char(isAlphaNum, isSpace, toLower,  ord)
-import List(group,sort)
-import List(intersperse, sortBy, groupBy)
-import Monad
-import qualified IO
-import qualified System
-import Random(StdGen, newStdGen, Random(randomR))
-import Time
+import System.Time
+import System.IO
+import System.IO.Error
+import System.Exit(exitFailure, exitWith, ExitCode(..))
+import System.Environment
+import Control.Monad(join, liftM, MonadPlus, mzero)
+import System.Random(StdGen, newStdGen, Random(randomR))
+import Data.Char(isAlphaNum, isSpace, toLower,  ord)
+import Data.List(group,sort)
+import Data.List(intersperse, sortBy, groupBy)
+-- import Random(StdGen, newStdGen, Random(randomR))
 
 {-# SPECIALIZE snub :: [String] -> [String] #-}
 {-# SPECIALIZE snub :: [Int] -> [Int] #-}
@@ -127,7 +130,7 @@ sortGroupUnderF f xs = [ (f x, xs) |  xs@(x:_) <- sortGroupUnder f xs]
 
 -- | write string to standard error
 putErr :: String -> IO ()
-putErr = IO.hPutStr IO.stderr
+putErr = System.IO.hPutStr System.IO.stderr
 
 -- | write string and newline to standard error
 putErrLn :: String -> IO ()
@@ -137,13 +140,13 @@ putErrLn s = putErr (s ++ "\n")
 -- | write string and newline to standard error,
 -- then exit program with failure.
 putErrDie :: String -> IO a
-putErrDie s = putErrLn s >> System.exitFailure
+putErrDie s = putErrLn s >> exitFailure
 
 
 -- | exit program successfully. 'exitFailure' is
 -- also exported from System.
 exitSuccess :: IO a
-exitSuccess = System.exitWith System.ExitSuccess
+exitSuccess = exitWith ExitSuccess
 
 
 {-# INLINE fromRight #-}
@@ -381,7 +384,7 @@ shellQuote ss = unwords (map f ss) where
 -- | looks up an enviornment variable and returns it in a 'MonadPlus' rather
 -- than raising an exception if the variable is not set.
 lookupEnv :: MonadPlus m => String -> IO (m String)
-lookupEnv s = catch (fmap return $ System.getEnv s) (\e -> if IO.isDoesNotExistError e then return mzero else ioError e)
+lookupEnv s = catch (fmap return $ getEnv s) (\e -> if isDoesNotExistError e then return mzero else ioError e)
 
 {-# SPECIALIZE fmapLeft :: (a -> c) -> [(Either a b)] -> [(Either c b)] #-}
 fmapLeft :: Functor f => (a -> c) -> f (Either a b) -> f (Either c b)
@@ -495,7 +498,7 @@ showDuration x = st "d" dayI ++ st "h" hourI ++ st "m" minI ++ show secI ++ "s" 
 -- arguments are given, read stdin.
 
 getArgContents = do
-    as <- System.getArgs
+    as <- getArgs
     let f "-" = getContents
         f fn = readFile fn
     cs <- mapM f as

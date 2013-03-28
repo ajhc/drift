@@ -1,7 +1,6 @@
 -- stub module to add your own rules.
 module Rules.Monoid (rules) where
 
-import List
 import RuleUtils
 
 rules = [

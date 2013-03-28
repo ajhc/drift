@@ -1,6 +1,5 @@
 module Rules.Utility(rules) where
 import RuleUtils
-import List
 import GenUtil
 
 rules :: [RuleDef]

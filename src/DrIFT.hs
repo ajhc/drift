@@ -7,17 +7,17 @@ import ChaseImports
 import DataP
 import GenUtil
 import GetOpt
-import Char
-import IO hiding(try)
-import List (partition,isSuffixOf,sort, groupBy, sortBy)
-import Monad(unless)
+import Data.List (partition,isSuffixOf,sort, groupBy, sortBy)
+import Control.Monad(unless)
 import PreludData(preludeData)
 import Pretty
 import RuleUtils (commentLine,texts)
 import RuleUtils(Rule,Tag)
 import Version
 import qualified Rules(rules)
-import qualified System
+import System.IO
+import System.Environment
+import Data.Char
 
 data Op = OpList | OpDerive | OpVersion
 
@@ -78,7 +78,7 @@ doList = do
 
 header = "Usage: DrIFT [OPTION...] file"
 main = do
-    argv <- System.getArgs
+    argv <- getArgs
     (env,n) <- case (getOpt Permute options argv) of
 	(as,n,[]) -> return (foldr ($) env as ,n)
 	(_,_,errs) -> putErrDie (concat errs ++ usageInfo header options)

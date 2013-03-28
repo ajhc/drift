@@ -16,7 +16,7 @@ AC_ARG_WITH(hcflags,
 
 GHC=$HC
 GHCFLAGS=
-GHC_CHECK_MODULE([System],[],[],[],[HCFLAGS="$HCFLAGS -hide-all-packages -package haskell98"])
+GHC_CHECK_MODULE([System.IO],[],[],[],[HCFLAGS="$HCFLAGS -hide-all-packages"])
 
 AC_PROG_INSTALL
 AC_PATH_PROGS(SH, sh)

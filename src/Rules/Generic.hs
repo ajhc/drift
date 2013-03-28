@@ -3,7 +3,7 @@ module Rules.Generic(rules) where
 
 -- import StandardRules
 import RuleUtils
-import List(intersperse)
+import Data.List(intersperse)
 
 
 rules :: [RuleDef]

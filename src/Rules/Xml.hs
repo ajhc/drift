@@ -1,7 +1,7 @@
 -- expanded from stub module to add new rules.
 module Rules.Xml(rules) where
 
-import List (nub,sortBy)
+import Data.List (nub,sortBy)
 import RuleUtils -- useful to have a look at this too
 
 rules :: [RuleDef]

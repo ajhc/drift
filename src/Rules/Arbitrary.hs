@@ -1,6 +1,6 @@
 module Rules.Arbitrary(rules) where
 
-import List
+import Data.List
 import RuleUtils
 
 rules = [
