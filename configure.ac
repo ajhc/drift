@@ -33,4 +33,5 @@ AC_OUTPUT(
 
         DrIFT.spec
         drift-ghc
+        DrIFT-cabalized.cabal
 )

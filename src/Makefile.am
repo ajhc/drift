@@ -28,7 +28,7 @@ SUFFIXES = .hs .lhs .o .hi
 # COMPILE = $(HC) $(HCFLAGS)
 
 # all: DrIFT
-DrIFT: $(DrIFT_SOURCES) $(nodist_DrIFT_SOURCES)
+DrIFT$(EXEEXT): $(DrIFT_SOURCES) $(nodist_DrIFT_SOURCES)
 	$(HC) $(HCFLAGS) -i. -i@srcdir@ -hidir . -odir . -o $@ --make @srcdir@/DrIFT.hs
 
 #.hs.o:

@@ -1,5 +1,5 @@
 name:                DrIFT-cabalized
-version:             2.2.3.3
+version:             @VERSION@.3
 synopsis:            Program to derive type class instances
 description:         DrIFT is a type sensitive preprocessor for Haskell. It extracts type declarations
                      and directives from modules. The directives cause rules to be fired on the parsed
@@ -34,7 +34,7 @@ source-repository head
   location: https://github.com/ajhc/drift.git
 
 executable DrIFT-cabalized
-    build-depends:  base, random, old-time
+    build-depends:  base >= 4.0 && < 5, random, old-time
     main-is:        DrIFT.hs
     hs-source-dirs: src, ./
     other-modules: CommandP, Version, GenUtil, Rules, Rules.Binary,
@@ -47,6 +47,6 @@ executable DrIFT-cabalized
     ghc-options:    -Wall
 
 executable DrIFT-cabalized-ghc
-    build-depends: base, process
+    build-depends: base >= 4.0 && < 5, process
     main-is:       drift-ghc.hs
     ghc-options:  -Wall
