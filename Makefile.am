@@ -42,6 +42,14 @@ publish: drift-list.txt docs bin-dist dist  # rpm
 	make -C $(PUBLISH_DIR) || true
 
 
+src/Rules.hs:
+	make -C src Rules.hs
+
+cabal-install: src/Rules.hs docs/drift.info
+	cabal install
+
+cabal-dist: src/Rules.hs docs/drift.info
+	runhaskell Setup.hs sdist
 
 rpm: depend $(PACKAGE_NAME).spec dist
 	cp $(PACKAGE_NAME)-$(VERSION).tar.gz $(HOME)/var/rpm/SOURCES/
