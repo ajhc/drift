@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 {- this module coordinates the whole shebang.
   First splits input into `of interest' and `computer generated'
   Then parses 'of interest', and plucks out data and newtype declarations and
@@ -25,12 +26,15 @@ import DataP
 import CommandP
 import ParseLib2
 import System.Environment
+import Control.Exception (SomeException, catch, Exception)
 import Data.List
 import qualified Unlit
 import Control.Monad
 import GenUtil
 
-try x = catch (x >>= return . Right) (return . Left)
+try :: IO a -> IO (Either String a)
+-- try x = catch (x >>= return . Right) (return . Left)
+try x = catch (x >>= return . Right) (\(e :: SomeException) -> (return $ Left "exception"))
 
 --- Split up input ---------------------------------------------------------
 splitString :: String -> String -> (String,String)

@@ -45,10 +45,12 @@ publish: drift-list.txt docs bin-dist dist  # rpm
 src/Rules.hs:
 	make -C src Rules.hs
 
-cabal-install: src/Rules.hs docs/drift.info
+# cabal-install: src/Rules.hs docs/drift.info
+cabal-install: src/Rules.hs
 	cabal install
 
-cabal-dist: src/Rules.hs docs/drift.info
+# cabal-dist: src/Rules.hs docs/drift.info
+cabal-dist: src/Rules.hs
 	runhaskell Setup.hs sdist
 
 rpm: depend $(PACKAGE_NAME).spec dist
