@@ -30,7 +30,7 @@ import qualified Unlit
 import Control.Monad
 import GenUtil
 
-try x = catch (x >>= return . Right) (return . Left)
+try x = iocatch (x >>= return . Right) (return . Left)
 
 --- Split up input ---------------------------------------------------------
 splitString :: String -> String -> (String,String)

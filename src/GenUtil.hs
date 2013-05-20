@@ -86,6 +86,7 @@ module GenUtil(
     readsM,
     split,
     tokens,
+    iocatch,
 
     -- * Classes
     UniqueProducer(..)
@@ -93,10 +94,12 @@ module GenUtil(
 
 import System.Time
 import System.IO
-import System.IO.Error
+import System.IO.Error(isDoesNotExistError)
+import Control.Exception
 import System.Exit(exitFailure, exitWith, ExitCode(..))
-import System.Environment
+import System.Environment(getArgs, getEnv)
 import Control.Monad(join, liftM, MonadPlus, mzero)
+import Prelude hiding (catch)
 import System.Random(StdGen, newStdGen, Random(randomR))
 import Data.Char(isAlphaNum, isSpace, toLower,  ord)
 import Data.List(group,sort)
@@ -105,6 +108,10 @@ import Data.List(intersperse, sortBy, groupBy)
 
 {-# SPECIALIZE snub :: [String] -> [String] #-}
 {-# SPECIALIZE snub :: [Int] -> [Int] #-}
+
+-- | catch function only for IOException
+iocatch :: IO a -> (IOException -> IO a) -> IO a
+iocatch = catch
 
 -- | sorted nub of list, much more efficient than nub, but doesnt preserve ordering.
 snub :: Ord a => [a] -> [a]
@@ -287,10 +294,10 @@ lefts :: [Either a b] -> [a]
 lefts xs = [x | Left x <- xs]
 
 ioM :: Monad m => IO a -> IO (m a)
-ioM action = catch (fmap return action) (\e -> return (fail (show e)))
+ioM action = iocatch (fmap return action) (\e -> return (fail (show e)))
 
 ioMp :: MonadPlus m => IO a -> IO (m a)
-ioMp action = catch (fmap return action) (\_ -> return mzero)
+ioMp action = iocatch (fmap return action) (\_ -> return mzero)
 
 -- | reformat a string to not be wider than a given width, breaking it up
 -- between words.
@@ -384,7 +391,7 @@ shellQuote ss = unwords (map f ss) where
 -- | looks up an enviornment variable and returns it in a 'MonadPlus' rather
 -- than raising an exception if the variable is not set.
 lookupEnv :: MonadPlus m => String -> IO (m String)
-lookupEnv s = catch (fmap return $ getEnv s) (\e -> if isDoesNotExistError e then return mzero else ioError e)
+lookupEnv s = iocatch (fmap return $ getEnv s) (\e -> if isDoesNotExistError e then return mzero else ioError e)
 
 {-# SPECIALIZE fmapLeft :: (a -> c) -> [(Either a b)] -> [(Either c b)] #-}
 fmapLeft :: Functor f => (a -> c) -> f (Either a b) -> f (Either c b)
