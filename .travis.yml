@@ -1,1 +1,16 @@
-language: haskell
+before_install:
+  - date
+  - uname -a
+  - ulimit -a
+  - cat /proc/cpuinfo
+  - cat /proc/meminfo
+  - cat /etc/apt/sources.list
+  - sudo apt-get -qq update
+  - sudo apt-get -qq -y install haskell-platform
+  - ghc --version
+script:
+  - autoreconf -i
+  - ./configure
+  - make cabal-install
+after_script:
+  - date
