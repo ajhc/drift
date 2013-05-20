@@ -6,7 +6,7 @@ before_install:
   - cat /proc/meminfo
   - cat /etc/apt/sources.list
   - sudo apt-get -qq update
-  - sudo apt-get -qq -y install haskell-platform
+  - sudo apt-get -qq -y install haskell-platform texinfo make automake
   - ghc --version
 script:
   - autoreconf -i
