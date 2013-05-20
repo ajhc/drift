@@ -23,7 +23,7 @@ homepage:            http://repetae.net/computer/haskell/DrIFT/
 
 Cabal-Version: >= 1.6
 build-type:   Simple
-data-files:   AUTHORS, Changelog, README, README.old, code/README.txt, docs/drift.texi, docs/drift.info,
+data-files:   AUTHORS, Changelog, README.md, README.old, code/README.txt, docs/drift.texi, docs/drift.info,
               example/README, example/TestTerm.out.correct
 extra-source-files:
        code/GhcBinary.hs, code/FunctorM.hs, example/TestTerm.hs, example/BTree.hs, example/Foo.lhs,
