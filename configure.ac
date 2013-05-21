@@ -1,4 +1,4 @@
-AC_INIT([DrIFT],[2.2.3],john@repetae.net, [DrIFT])
+AC_INIT([DrIFT],[2.2.4],john@repetae.net, [DrIFT])
 AC_CONFIG_SRCDIR(src/DrIFT.hs)
 AC_CONFIG_MACRO_DIR(ac-macros)
 AC_CONFIG_AUX_DIR(ac-macros)
