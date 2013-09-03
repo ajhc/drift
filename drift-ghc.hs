@@ -2,7 +2,7 @@ import Data.List (isInfixOf)
 import System.Cmd (rawSystem)
 import System.Environment (getArgs)
 import System.Exit (ExitCode(ExitSuccess))
-import Paths_DrIFT_cabalized  (getBinDir)
+import Paths_DrIFT (getBinDir)
 
 main :: IO ExitCode
 main = do args <- getArgs
