@@ -1,3 +1,8 @@
+DrIFT-2.3.0:
+  * Publish DrIFT in HackageDB.
+  * Get less warning message.
+
+
 DrIFT-2.2.2:
   * redid build model, collect deriving rules automatically.
 
