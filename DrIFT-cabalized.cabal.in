@@ -18,7 +18,7 @@ license:             BSD3
 license-file:        LICENSE
 -- For contributors & what they did, see AUTHORS
 author:              Noel Winstanley, John Meacham <john@repetae.net>
-maintainer:          <gwern0@gmail.com>, Kiwamu Okabe <kiwamu@debian.or.jp>
+maintainer:          gwern <gwern0@gmail.com>, Metasepi team <metasepi@gmail.com>
 homepage:            http://repetae.net/computer/haskell/DrIFT/
 
 Cabal-Version: >= 1.6
@@ -33,7 +33,7 @@ source-repository head
   type:     git
   location: https://github.com/ajhc/drift.git
 
-executable DrIFT-cabalized
+executable DrIFT
     build-depends:  base >= 4.0 && < 5, random, old-time
     main-is:        DrIFT.hs
     hs-source-dirs: src, ./
@@ -46,7 +46,7 @@ executable DrIFT-cabalized
                    Unlit, GetOpt
     ghc-options:    -Wall
 
-executable DrIFT-cabalized-ghc
+executable drift-ghc
     build-depends: base >= 4.0 && < 5, process
     main-is:       drift-ghc.hs
     ghc-options:  -Wall
