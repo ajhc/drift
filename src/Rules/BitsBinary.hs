@@ -1,7 +1,7 @@
 -- stub module to add your own rules.
 module Rules.BitsBinary(rules) where
 
-import Data.List (nub,intersperse)
+import Data.List (intersperse)
 import RuleUtils -- useful to have a look at this too
 
 rules = [

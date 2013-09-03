@@ -217,22 +217,18 @@ fsts = map fst
 snds :: [(a,b)] -> [b]
 snds = map snd
 
-{-# INLINE repeatM #-}
 {-# SPECIALIZE repeatM :: IO a -> IO [a] #-}
 repeatM :: Monad m => m a -> m [a]
 repeatM x = sequence $ repeat x
 
-{-# INLINE repeatM_ #-}
 {-# SPECIALIZE repeatM_ :: IO a -> IO () #-}
 repeatM_ :: Monad m => m a -> m ()
 repeatM_ x = sequence_ $ repeat x
 
-{-# INLINE replicateM #-}
 {-# SPECIALIZE replicateM :: Int -> IO a -> IO [a] #-}
 replicateM :: Monad m => Int -> m a -> m [a]
 replicateM n x = sequence $ replicate n x
 
-{-# INLINE replicateM_ #-}
 {-# SPECIALIZE replicateM_ :: Int -> IO a -> IO () #-}
 replicateM_ :: Monad m => Int -> m a -> m ()
 replicateM_ n x = sequence_ $ replicate n x

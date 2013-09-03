@@ -1,6 +1,6 @@
 module Rules.Utility(rules) where
 import RuleUtils
-import GenUtil
+-- import GenUtil
 
 rules :: [RuleDef]
 rules = [("Query",queryGen, "Utility", "provide a QueryFoo class with 'is', 'has', 'from', and 'get' routines", Nothing) ]

@@ -1,6 +1,6 @@
 module Rules.Binary(rules) where
 
-import Data.List (nub,intersperse)
+-- import Data.List (nub,intersperse)
 import RuleUtils
 
 rules = [
