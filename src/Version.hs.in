@@ -1,8 +1,10 @@
 module Version(package, version, fullName) where
 
+package :: String
 package = "@PACKAGE@"
 
+version :: String
 version = "@VERSION@"
 
-
+fullName :: String
 fullName = package ++ "-" ++ version

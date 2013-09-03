@@ -33,6 +33,7 @@ data Env = Env {
     }
 
 
+env :: Env
 env = Env {
     envVerbose = False,
     envOutput = Nothing,
@@ -45,6 +46,7 @@ env = Env {
     }
 
 
+getOutput :: Env -> IO Handle
 getOutput e = maybe (return stdout) (\fn -> openFile fn WriteMode) (envOutput e)
 
 options :: [OptDescr (Env -> Env)]
@@ -60,8 +62,10 @@ options =
     , Option ['i'] ["ignore"]  (NoArg (\e->e{envIgnoreDirectives = True})) "ignore directives in file. useful with -g"
     ]
 
+setArg :: String -> Env -> Env
 setArg x e = e {envArgs = (n, tail rest):(envArgs e)} where
     (n,rest) = span (/= ':') x
+addGlobalRule :: Tag -> Env -> Env
 addGlobalRule x e = e {envGlobalRules = x:(envGlobalRules e)}
 
 
@@ -71,12 +75,15 @@ categorize xs = map f $ groupBy fstEq $ sortBy fstOrd xs where
     fstEq (a,_) (b,_) = a == b
     fstOrd (a,_) (b,_) = compare a b
 
+doList :: IO ()
 doList = do
     let rn = categorize [(c,(n,h)) | (n,_,c,h,_) <- Rules.rules]
     putStrLn $ unlines $ buildTableLL $ concat [ (c ++ ":","") : (map (\(a,b) -> ("   " ++ a, b)) $ sort xs)| (c,xs)<- rn]
 
 
+header :: String
 header = "Usage: DrIFT [OPTION...] file"
+main :: IO ()
 main = do
     argv <- getArgs
     (env,n) <- case (getOpt Permute options argv) of
@@ -91,6 +98,7 @@ main = do
 
 
 
+derive :: Env -> FilePath -> IO ()
 derive env fname = do
     let findent xs = f (lines xs) where
             f (x:xs) = let (w,n) = span isSpace x in case n of
@@ -115,6 +123,7 @@ derive env fname = do
     hFlush handle
 
 
+addGlobals :: Env -> [([Tag], Data)] -> [([Tag], Data)]
 addGlobals env tds    =  (envGlobalRules env,Directive):concatMap f tds where
     f x | not (envIgnoreDirectives env) = [x]
     f (_,Directive)  = []
@@ -122,9 +131,12 @@ addGlobals env tds    =  (envGlobalRules env,Directive):concatMap f tds where
     f (_,d) = [([],d)]
 
 
+rules :: [(String, Data -> Doc)]
 rules = map (\(a,b,_,_,_) -> (a,b)) Rules.rules
 -- codeRender doc = fullRender PageMode 80 1 doc "" -- now obsolete
+vsep :: [Doc] -> Doc
 vsep = vcat . map ($$ (text ""))
+sepDoc :: Doc
 sepDoc = commentLine . text $ " Imported from other files :-"
 
 backup :: FilePath -> FilePath
@@ -151,7 +163,7 @@ process i = (concatMap g dats ++ concatMap h moreDats,parsedData,imports)
 find :: Tag -> [Rule] -> (Data -> Doc)
 find t r = case filter ((==t) . fst) $ r of
                [] -> const (commentLine warning)
-               (x:xs) -> snd x
+               (x:_) -> snd x
    where
    warning = hsep . texts $ ["Warning : Rule",t,"not found."]
 
