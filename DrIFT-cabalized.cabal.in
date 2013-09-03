@@ -44,9 +44,9 @@ executable DrIFT
                    Rules.FunctorM, PreludData, ParseLib2,
                    DataP, ChaseImports, Pretty, RuleUtils,
                    Unlit, GetOpt
-    ghc-options:    -Wall -fno-warn-name-shadowing -fno-warn-unused-binds
+    ghc-options:    -Wall -fno-warn-name-shadowing -fno-warn-unused-binds -fno-warn-unused-matches -fno-warn-unused-do-bind -fno-warn-missing-signatures
 
 executable drift-ghc
     build-depends: base >= 4.0 && < 5, process
     main-is:       drift-ghc.hs
-    ghc-options:  -Wall -fno-warn-name-shadowing -fno-warn-unused-binds
+    ghc-options:  -Wall -fno-warn-name-shadowing -fno-warn-unused-binds -fno-warn-unused-matches -fno-warn-unused-do-bind -fno-warn-missing-signatures
