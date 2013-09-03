@@ -13,7 +13,7 @@ import PreludData(preludeData)
 import Pretty
 import RuleUtils (commentLine,texts)
 import RuleUtils(Rule,Tag)
-import Version
+import DrIFT.Version
 import qualified Rules(rules)
 import System.IO
 import System.Environment

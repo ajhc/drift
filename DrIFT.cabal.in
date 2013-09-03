@@ -1,4 +1,4 @@
-name:                DrIFT-cabalized
+name:                DrIFT
 version:             @VERSION@
 synopsis:            Program to derive type class instances
 description:         DrIFT is a type sensitive preprocessor for Haskell. It extracts type declarations
@@ -21,7 +21,7 @@ author:              Noel Winstanley, John Meacham <john@repetae.net>
 maintainer:          gwern <gwern0@gmail.com>, Metasepi team <metasepi@gmail.com>
 homepage:            http://repetae.net/computer/haskell/DrIFT/
 
-Cabal-Version: >= 1.6
+Cabal-Version: >= 1.8
 build-type:   Simple
 data-files:   AUTHORS, Changelog, README.md, README.old, code/README.txt, docs/drift.texi, docs/drift.info,
               example/README, example/TestTerm.out.correct
@@ -33,11 +33,17 @@ source-repository head
   type:     git
   location: https://github.com/ajhc/drift.git
 
+library
+    hs-source-dirs:  src
+    build-depends:   base >= 4.0 && < 5
+    exposed-modules: DrIFT.Version
+    ghc-options:     -Wall -fno-warn-name-shadowing -fno-warn-unused-binds -fno-warn-unused-matches -fno-warn-unused-do-bind -fno-warn-missing-signatures
+
 executable DrIFT
-    build-depends:  base >= 4.0 && < 5, random, old-time
+    build-depends:  base >= 4.0 && < 5, random, old-time, DrIFT
     main-is:        DrIFT.hs
-    hs-source-dirs: src, ./
-    other-modules: CommandP, Version, GenUtil, Rules, Rules.Binary,
+    hs-source-dirs: src
+    other-modules: CommandP, GenUtil, Rules, Rules.Binary,
                    Rules.GhcBinary, Rules.Arbitrary,
                    Rules.Monoid, Rules.BitsBinary, Rules.Xml,
                    Rules.Utility, Rules.Generic, Rules.Standard,

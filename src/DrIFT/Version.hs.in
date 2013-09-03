@@ -1,4 +1,4 @@
-module Version(package, version, fullName) where
+module DrIFT.Version(package, version, fullName) where
 
 package :: String
 package = "@PACKAGE@"

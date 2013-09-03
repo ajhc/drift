@@ -1,4 +1,4 @@
-AC_INIT([DrIFT],[2.3.0],john@repetae.net, [DrIFT])
+AC_INIT([DrIFT],[2.4.0],john@repetae.net, [DrIFT])
 AC_CONFIG_SRCDIR(src/DrIFT.hs)
 AC_CONFIG_MACRO_DIR(ac-macros)
 AC_CONFIG_AUX_DIR(ac-macros)
@@ -29,9 +29,9 @@ AC_OUTPUT(
 	Makefile
 	src/Makefile
 	example/Makefile
-	src/Version.hs
+	src/DrIFT/Version.hs
 
         DrIFT.spec
         drift-ghc
-        DrIFT-cabalized.cabal
+        DrIFT.cabal
 )
