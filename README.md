@@ -1,11 +1,11 @@
-# DrIFT-cabalized [![Build Status](https://travis-ci.org/ajhc/drift.png)](https://travis-ci.org/ajhc/drift)
+# DrIFT [![Build Status](https://travis-ci.org/ajhc/drift.png)](https://travis-ci.org/ajhc/drift)
 
 This package contains a source distribution of DrIFT, a tool for automatic
 derivation of Haskell class instances. DrIFT was formerly known as Derive.
 
 The original homepage is at
 [http://repetae.net/john/computer/haskell/DrIFT/](http://repetae.net/john/computer/haskell/DrIFT/).
-But DrIFT-cabalized package has some changes with original DrIFT.
+But this DrIFT package has some changes with original DrIFT.
 
 ## Contents of this package:
 
