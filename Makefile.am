@@ -13,7 +13,7 @@ EXTRA_DIST = configure.ac \
              Changelog README.old drift-ghc.in code \
              code/FunctorM.hs code/GhcBinary.hs code/README.txt \
 	     ac-macros/acincludepackage.m4 LICENSE docs/drift.html \
-	     DrIFT.spec DrIFT-cabalized.cabal
+	     DrIFT.spec DrIFT.cabal
 
 bin_SCRIPTS = drift-ghc
 

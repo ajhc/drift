@@ -2,6 +2,7 @@ import Data.List (isInfixOf)
 import System.Cmd (rawSystem)
 import System.Environment (getArgs)
 import System.Exit (ExitCode(ExitSuccess))
+import System.FilePath
 import Paths_DrIFT (getBinDir)
 
 main :: IO ExitCode
@@ -14,9 +15,9 @@ main = do args <- getArgs
 conditional ::  FilePath -> FilePath -> FilePath -> IO ExitCode
 conditional orgnl inf outf = do prefix <- getBinDir
                                 infile <- readFile inf
-                                if "{-!" `isInfixOf` infile then do putStrLn (prefix ++ "DriFT-cabalized " ++
+                                if "{-!" `isInfixOf` infile then do putStrLn (prefix </> "DrIFT " ++
                                                                               inf ++ " -o " ++ outf)
-                                                                    rawSystem inf ["-o", outf]
+                                                                    rawSystem (prefix </> "DrIFT") [inf, "-o", outf]
                                  else do writeFile outf ("{-# LINE 1 \"" ++ orgnl ++ " #-}")
                                          readFile inf >>= appendFile outf
                                          return ExitSuccess
