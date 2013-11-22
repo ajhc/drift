@@ -1,8 +1,8 @@
 name:                DrIFT
 version:             @VERSION@
 synopsis:            Program to derive type class instances
-description:         Data.Derive <http://hackage.haskell.org/package/derive> is good another solution for DrFIT.
-                     But DrFIT is Haskell 98 compliant, derive is not.
+description:         Data.Derive <http://hackage.haskell.org/package/derive> is good another solution for DrIFT.
+                     But DrIFT is Haskell 98 compliant, derive is not.
                      .
                      DrIFT is a type sensitive preprocessor for Haskell. It extracts type declarations
                      and directives from modules. The directives cause rules to be fired on the parsed
