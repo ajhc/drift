@@ -33,6 +33,8 @@ module ParseLib2
 
 import Data.Char
 import Control.Monad
+import qualified Control.Applicative as A
+
 
 infixr 5 +++
 
@@ -53,7 +55,7 @@ instance Monad Parser where
 
    -- >>=         :: Parser a -> (a -> Parser b) -> Parser b
    (P p) >>= f     = P (\pos inp -> concat [papply (f v) pos out
-						| (v,out) <- p pos inp])
+                        | (v,out) <- p pos inp])
    fail s          = P (\pos inp -> [])
 
 instance MonadPlus Parser where
@@ -61,6 +63,15 @@ instance MonadPlus Parser where
    mzero                = P (\pos inp -> [])
    -- mplus            :: Parser a -> Parser a -> Parser a
    (P p) `mplus` (P q)    = P (\pos inp -> (p pos inp ++ q pos inp))
+
+instance A.Alternative Parser where
+    empty = mzero
+    (<|>) = undefined -- another quick fix
+
+instance A.Applicative Parser where
+    pure = return
+    (P cs1) <*> (P cs2) = undefined -- quick fix
+
 
 -- bits which donn't fit into Haskell's type classes just yet :-(
 
@@ -82,9 +93,10 @@ fetch = update id
 --- Other primitive parser combinators ---------------------------------------
 
 item              :: Parser Char
-item = do (pos,x:_) <- update newstate
-	  defpos <- env
-	  if onside pos defpos then return x else mzero
+item = do 
+    (pos,x:_) <- update newstate
+    defpos    <- env
+    if onside pos defpos then return x else mzero
 
 force             :: Parser a -> Parser a
 force (P p)        = P (\pos inp -> let x = p pos inp in
@@ -105,11 +117,11 @@ onside (l,c) (dl,dc) = (c > dc) || (l == dl)
 
 newstate :: Pstring -> Pstring
 newstate ((l,c),x:xs) = ((l',c'),xs)
-	where
-	(l',c') = case x of
-			'\n' -> (l+1,0)
-			'\t' -> (l,((c `div` 8) +1)*8)
-			_    -> (l,c+1)
+    where
+    (l',c') = case x of
+            '\n' -> (l+1,0)
+            '\t' -> (l,((c `div` 8) +1)*8)
+            _    -> (l,c+1)
 
 --- Derived combinators ------------------------------------------------------
 
@@ -209,8 +221,8 @@ onelinecomment     = do {string "--"; many (sat (\x -> x /= '\n')); return ()}
 
 bracecomment      :: Parser ()
 bracecomment = skipNest
-	 (do{string "{-"; sat (`notElem` ['!','@','*'])})
-	 (do{sat (`notElem` ['!','@','*']);string "-}"})
+     (do{string "{-"; sat (`notElem` ['!','@','*'])})
+     (do{sat (`notElem` ['!','@','*']);string "-}"})
 
 junk              :: Parser ()
 junk               = do _ <- setenv (0,-1) (many (spaces +++ comment))
@@ -240,18 +252,20 @@ identifier ks      = token (do {x <- ident; if not (elem x ks) then return x
 --- Offside Parsers ---------------------------------------------------------
 
 many1_offside :: Parser a -> Parser [a]
-many1_offside p = do (pos,_) <- fetch
-		     vs <- setenv pos (many1 (off p))
-                     return vs
+many1_offside p = do 
+    (pos,_) <- fetch
+    vs <- setenv pos (many1 (off p))
+    return vs
 
 many_offside :: Parser a -> Parser [a]
 many_offside p = many1_offside p +++ mzero
 
 
 off :: Parser a -> Parser a
-off p = do (dl,dc) <- env
-	   ((l,c),_) <- fetch
-	   if c == dc then setenv (l,dc) p else mzero
+off p = do 
+    (dl,dc) <- env
+    ((l,c),_) <- fetch
+    if c == dc then setenv (l,dc) p else mzero
 
 
 ------------------------------------------------------------------------------
@@ -262,10 +276,8 @@ skipUntil p = p +++ do token (many1 (sat (not . isSpace)))
                        skipUntil p
 
 skipNest :: Parser a -> Parser b -> Parser ()
-skipNest start finish  = let
-    x = do{ finish;return()}
-	+++ do{skipNest start finish;x} +++ do{item;x}
-    in do{start; x}
+skipNest start finish  = let x = do{ finish;return()} +++ do{skipNest start finish;x} +++ do{item;x}
+                         in do{start; x}
 
 -- this are messy, but make writing incomplete parsers a whole lot
 -- easier.
@@ -276,13 +288,15 @@ skipUntilOff p = fmap (concatMap justs) . many_offside $
 
 skipUntilParse :: Char ->  Parser a  -> Parser [a]
 skipUntilParse u p = fmap (concatMap justs) . many $
-	do r<- p
-           token (char u)
-           return (Just r)
+    do 
+        r<- p
+        token (char u)
+        return (Just r)
         +++
-	do many . token . many1 . sat $(/= u)
-           token (char u)
-           return Nothing
+    do 
+        many . token . many1 . sat $(/= u)
+        token (char u)
+        return Nothing
 
 justs (Just a)  = [a]
 justs Nothing   = []
