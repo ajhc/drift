@@ -33,6 +33,7 @@ module ParseLib2
 
 import Data.Char
 import Control.Monad
+import Control.Applicative hiding (many)
 
 infixr 5 +++
 
@@ -47,14 +48,23 @@ instance Functor Parser where
    -- fmap         :: (a -> b) -> (Parser a -> Parser b)
    fmap f (P p)     = P (\pos inp -> [(f v, out) | (v,out) <- p pos inp])
 
+instance Applicative Parser where
+    pure v          = P (\pos inp -> [(v,inp)])
+    (<*>)           = ap
+
 instance Monad Parser where
-   -- return      :: a -> Parser a
-   return v        = P (\pos inp -> [(v,inp)])
+   -- -- return      :: a -> Parser a
+   -- return v        = P (\pos inp -> [(v,inp)])
+   return = pure
 
    -- >>=         :: Parser a -> (a -> Parser b) -> Parser b
    (P p) >>= f     = P (\pos inp -> concat [papply (f v) pos out
-						| (v,out) <- p pos inp])
+           | (v,out) <- p pos inp])
    fail s          = P (\pos inp -> [])
+
+instance Alternative Parser where
+    (<|>) = mplus
+    empty = mzero
 
 instance MonadPlus Parser where
    -- mzero            :: Parser a
