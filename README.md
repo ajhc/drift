@@ -25,7 +25,7 @@ To configure and install DrIFT from the source tarball
 
 First, you should use the arafura branch, rather than master branch.
 
-* [master branch](https://github.com/ajhc/drift/tree/master): Do not touch me, mirror of [jhc's darcs repository](http://repetae.net/dw/darcsweb.cgi?r=DrIFT;a=summary).
+* [master branch](https://github.com/ajhc/drift/tree/master): Do not touch me, mirror of [original darcs repository](http://repetae.net/dw/darcsweb.cgi?r=DrIFT;a=summary).
 * [arafura branch](https://github.com/ajhc/drift/tree/arafura): For developing Ajhc's DrIFT.
 
 You should send patch to original DrIFT, if testing on arafura branch is good.
