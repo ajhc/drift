@@ -3,6 +3,7 @@ module Rules.BitsBinary(rules) where
 
 import Data.List (intersperse)
 import RuleUtils -- useful to have a look at this too
+import Prelude hiding ((<>))
 
 rules = [
     ("BitsBinary", userRuleBinary, "Binary", "bit based binary encoding of terms", Nothing)

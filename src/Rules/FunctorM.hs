@@ -3,6 +3,7 @@ module Rules.FunctorM (rules) where
 
 import Data.List
 import RuleUtils
+import Prelude hiding ((<>))
 
 rules = [
     ("FunctorM", userRuleFunctorM, "Generics", "derive reasonable fmapM implementation", Nothing),

@@ -4,7 +4,7 @@ module Rules.Generic(rules) where
 -- import StandardRules
 import RuleUtils
 import Data.List(intersperse)
-
+import Prelude hiding ((<>))
 
 rules :: [RuleDef]
 rules =  [

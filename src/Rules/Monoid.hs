@@ -2,7 +2,7 @@
 module Rules.Monoid (rules) where
 
 import RuleUtils
-
+import Prelude hiding ((<>))
 rules = [
     ("Monoid", userRuleMonoid, "Generics", "derive reasonable Data.Monoid implementation", Nothing)
     ]
