@@ -3,6 +3,7 @@ module Rules.Xml(rules) where
 
 import Data.List (nub,sortBy)
 import RuleUtils -- useful to have a look at this too
+import Prelude hiding ((<>))
 
 rules :: [RuleDef]
 rules =

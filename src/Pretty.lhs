@@ -175,7 +175,12 @@ module Pretty (
         render, fullRender
   ) where
 
+
+import Prelude hiding ((<>))
+
 -- Don't import Util( assertPanic ) because it makes a loop in the module structure
+
+
 
 infixl 6 <>
 infixl 6 <+>

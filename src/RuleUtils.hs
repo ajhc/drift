@@ -6,6 +6,8 @@ import Pretty
 import DataP (Statement(..),Data(..),Type(..),Name,Var,Class,
 		Body(..),Constructor)
 
+import Prelude hiding ((<>))
+
 -- Rule Declarations
 
 type Tag = String

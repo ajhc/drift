@@ -3,7 +3,7 @@ module Rules.Standard(rules) where
 import RuleUtils
 import Data.List
 import GenUtil
-
+import Prelude hiding ((<>))
 
 --- Add Rules Below Here ----------------------------------------------------
 
